@@ -40,3 +40,16 @@ Route::post('/articles', function (Request $request) {
 
     return response('well done you posted it');
 });
+
+Route::get('/articles/{article}', function (Article $article) {
+    return $article;
+});
+
+Route::patch('/articles/{article}', function (Request $request, Article $article) {
+    $article->update($request->all());
+    $article->save();
+});
+
+Route::delete('/articles/{article}', function (Request $request, Article $article) {
+    $article->delete();
+});
