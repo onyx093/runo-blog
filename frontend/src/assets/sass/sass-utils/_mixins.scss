@@ -1,0 +1,9 @@
+@mixin container {
+    max-width: $containerWidth;
+    width: 100%;
+    margin: 0 auto;
+}
+
+@mixin unset {
+    all: unset;
+}
