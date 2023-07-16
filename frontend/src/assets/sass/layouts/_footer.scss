@@ -11,11 +11,19 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
+
+    @include for-tablet-down {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include for-phone-only {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
 
 .main-footer__upper-title {
     font-family: $loraFont;
-    font-size: 18px;
+    font-size: 1.3rem;
     line-height: 1.389;
     font-weight: 700;
     color: $white;
@@ -25,7 +33,7 @@
 .main-footer__upper-content {
     color: #e5e5e5;
     font-family: $loraFont;
-    font-size: 12px;
+    font-size: 0.875rem;
     font-weight: 400;
     margin: 18px 0;
 }
@@ -44,6 +52,6 @@
 .main-footer__bottom-text {
     margin: 0;
     font-family: $loraFont;
-    font-size: 14px;
+    font-size: 1rem;
     color: #e5e5e5;
 }

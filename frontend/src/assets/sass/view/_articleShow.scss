@@ -6,9 +6,13 @@
     @include container;
     padding: 100px 15px;
 
+    @include for-phone-only {
+        padding: 30px 15px;
+    }
+
     p {
         color: #495057;
-        font-size: 14px;
+        font-size: 1rem;
         font-style: normal;
         font-family: $loraFont;
         font-weight: 400;
@@ -17,7 +21,7 @@
 
     blockquote {
         color: $primaryColor;
-        font-size: 36px;
+        font-size: 2.5rem;
         font-family: $loraFont;
         font-style: normal;
         font-weight: 400;
@@ -26,7 +30,12 @@
 }
 
 .article-content__footer {
+    margin-top: 55px;
     padding: 55px 15px;
     border-top: 1px solid #c4c4c4;
     border-bottom: 1px solid #c4c4c4;
+
+    @include for-phone-only {
+        padding: 20px 15px;
+    }
 }

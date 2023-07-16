@@ -10,11 +10,3 @@
         <li class="section__category section__category--last"><a href="#" class="section__category-link">Branding</a></li>
     </ul>
 </template>
-
-<script setup>
-
-</script>
-
-<style lang="scss" scoped>
-
-</style>

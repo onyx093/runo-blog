@@ -2,48 +2,48 @@
     display: flex;
     background-color: $logoColor;
     padding: 45px 0;
+}
 
-    .section__inner {
-        @include container;
-    }
+.section__inner {
+    @include container;
+}
 
-    .section__heading {
-        margin-top: 0px;
-        font-family: $loraFont;
-        font-weight: 700;
-        font-size: 36px;
-        line-height: 46px;
-    }
+.section__heading {
+    margin-top: 0px;
+    font-family: $loraFont;
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 46px;
+}
 
-    .section__categories {
-        @include unset;
-        display: flex;
-    }
+.section__categories {
+    @include unset;
+    display: flex;
+}
 
-    .section__category {
-        @include unset;
-    }
+.section__category {
+    @include unset;
+}
 
-    .section__category--last {
-        margin-left: auto;
-    }
+.section__category--last {
+    margin-left: auto;
+}
 
-    .section__category-link {
-        font-family: $loraFont;
-        font-weight: 700;
-        font-size: 12px;
-        line-height: 1.5;
-        color: #495057;
-        margin-right: 20px;
-        text-decoration: none;
-        transition: .5s all;
+.section__category-link {
+    font-family: $loraFont;
+    font-weight: 700;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #495057;
+    margin-right: 20px;
+    text-decoration: none;
+    transition: .5s all;
 
-        &:hover {
-            color: $primaryColor;
-        }
-    }
-
-    .section__category-link--active {
+    &:hover {
         color: $primaryColor;
     }
+}
+
+.section__category-link--active {
+    color: $primaryColor;
 }

@@ -20,7 +20,3 @@ import ArticleCategory from '@/components/article/ArticleCategory.vue';
 
 
 </script>
-
-<style lang="scss" scoped>
-
-</style>

@@ -12,13 +12,17 @@
     justify-content: space-between;
     @include container;
     align-items: center;
+
+    @include for-phone-only {
+        padding: 0 15px;
+    }
 }
 
 .header__title {
     color: $logoColor;
     font-family: 'League Spartan', serif;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 1.4rem;
     line-height: 22px;
 }
 
@@ -36,10 +40,14 @@
     text-decoration: none;
     font-family: $robotoFont;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 0.875rem;
     line-height: 14px;
 
     &:hover {
         border-bottom: 1px solid $primaryColor;
+    }
+
+    @include for-phone-only {
+        padding: 10px;
     }
 }

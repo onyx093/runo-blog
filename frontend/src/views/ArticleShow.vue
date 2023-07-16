@@ -35,7 +35,3 @@
 import ArticleCategory from '@/components/article/ArticleCategory.vue';
 import ArticleAuthor from '@/components/article/ArticleAuthor.vue';
 </script>
-
-<style lang="scss" scoped>
-
-</style>

@@ -3,6 +3,14 @@
 html {
     background-color: #3e3e3e;
     font-size: 14px;
+
+    @include for-phone-only {
+        font-size: 10px;
+    }
+
+    @include for-large-screen-only {
+        font-size: 16px;
+    }
 }
 
 body {
