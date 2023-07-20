@@ -11,6 +11,22 @@
 
     @include for-phone-only {
         grid-template-columns: repeat(1, 1fr);
+        margin-bottom: 50px;
+    }
+}
+
+.articles--related{
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-columns: fit-content(420px);
+    grid-auto-rows: fit-content(350px);
+    overflow: hidden;
+
+    @include for-tablet-down {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include for-phone-only {
+        grid-template-columns: repeat(1, 1fr);
     }
 }
 
@@ -133,40 +149,4 @@
 
 .article__text--fixed-width {
     max-width: 350px;
-}
-
-.article__author-container {
-    display: flex;
-    align-items: center;
-    margin: 15px;
-}
-
-.article__author-image {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin-right: 20px;
-}
-
-.article__author-heading {
-    @include unset;
-    display: block;
-    font-family: $loraFont;
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: #343a40;
-    margin-bottom: 10px;
-}
-
-.article__author-role {
-    @include unset;
-    display: block;
-    font-family: $loraFont;
-    font-size: 0.875rem;
-    color: #6c757d;
-}
-
-.editors-pick {
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: fit-content(350px);
 }

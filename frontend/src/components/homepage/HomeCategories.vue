@@ -7,6 +7,6 @@
         <li class="section__category"><a href="#" class="section__category-link">Fashion</a></li>
         <li class="section__category"><a href="#" class="section__category-link">Technology</a></li>
         <li class="section__category"><a href="#" class="section__category-link">Branding</a></li>
-        <li class="section__category section__category--last"><a href="#" class="section__category-link">Branding</a></li>
+        <li class="section__category section__category--last"><a href="#" class="section__category-link">View All</a></li>
     </ul>
 </template>

@@ -1,0 +1,30 @@
+.article__author-container {
+    display: flex;
+    align-items: center;
+    margin: 15px;
+}
+
+.article__author-image {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+}
+
+.article__author-heading {
+    @include unset;
+    display: block;
+    font-family: $loraFont;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #343a40;
+    margin-bottom: 10px;
+}
+
+.article__author-role {
+    @include unset;
+    display: block;
+    font-family: $loraFont;
+    font-size: 0.875rem;
+    color: #6c757d;
+}

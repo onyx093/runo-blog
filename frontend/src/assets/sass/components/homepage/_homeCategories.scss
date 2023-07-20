@@ -6,6 +6,9 @@
 
 .section__inner {
     @include container;
+    @include for-tablet-down {
+        padding: 0 2rem;
+    }
 }
 
 .section__heading {
@@ -19,6 +22,7 @@
 .section__categories {
     @include unset;
     display: flex;
+    gap: 20px;
 }
 
 .section__category {
@@ -35,7 +39,6 @@
     font-size: 0.875rem;
     line-height: 1.5;
     color: #495057;
-    margin-right: 20px;
     text-decoration: none;
     transition: .5s all;
 

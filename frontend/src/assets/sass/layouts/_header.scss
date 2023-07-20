@@ -12,10 +12,7 @@
     justify-content: space-between;
     @include container;
     align-items: center;
-
-    @include for-phone-only {
-        padding: 0 15px;
-    }
+    padding: 0 1rem 0 2rem;
 }
 
 .header__title {

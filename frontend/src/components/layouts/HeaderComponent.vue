@@ -1,7 +1,7 @@
 <template>
     <header class="header">
         <div class="header__inner">
-            <h1 class="header__title">Levelup blog</h1>
+            <h1 class="header__title">LevelUp blog</h1>
             <nav class="header__nav">
                 <ul class="header__nav-list">
                     <li class="header__nav-item">
