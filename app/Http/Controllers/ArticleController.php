@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
-use Illuminate\Http\Request;
+use App\Models\Tag;
 
 class ArticleController extends Controller
 {
@@ -12,19 +14,31 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::query()->with(['comments', 'author'])->get();
+        $articles = Article::query()->with(['comments', 'author', 'tags'])->get();
         return $articles;
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreArticleRequest $request)
     {
-        $article = new Article($request->all());
+        $article = new Article($request->validated());
         $article->save();
+        if($request->has('tags'))
+        {
+            foreach (explode(',', $request->tags) as $requestTag) {
+                if(!empty(trim($requestTag))){
+                    $tag = Tag::firstOrCreate([
+                        'name' => $requestTag,
+                        'author_id' => $request->validated('author_id'),
+                    ]);
+                    $article->tags()->attach($tag);
+                }
+            }
+        }
 
-        return response()->noContent();
+        return response($article, 201);
     }
 
     /**
@@ -32,15 +46,16 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
+        $article->load(['comments', 'tags']);
         return $article;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Article $article)
+    public function update(UpdateArticleRequest $request, Article $article)
     {
-        $article->update($request->all());
+        $article->update($request->validated());
         return response()->noContent();
     }
 
@@ -49,6 +64,7 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
+        $article->tags()->detach();
         $article->delete();
 
         return response()->noContent();

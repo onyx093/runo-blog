@@ -2,7 +2,7 @@
 import ArticleCard from '@/components/article/ArticleCard.vue';
 import ArticleMain from '@/components/article/ArticleMain.vue';
 import HomeCategories from '@/components/homepage/HomeCategories.vue'
-import RelatedArticleCard from '../components/article/RelatedArticleCard.vue';
+import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
 
 </script>
 
