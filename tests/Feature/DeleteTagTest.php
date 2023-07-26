@@ -34,10 +34,7 @@ class DeleteTagTest extends TestCase
     public function test_will_fail_with_a_404_if_tag_to_be_deleted_is_not_found()
     {
         $tag = Tag::factory()->createOne();
-        $data = [
-            'content' => fake()->sentence(),
-        ];
-        $response = $this->putJson(route('tags.destroy', 99999), $data);
+        $response = $this->deleteJson(route('tags.destroy', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('tags', [
             'id' => 99999,

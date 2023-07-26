@@ -47,5 +47,9 @@ class ViewTagTest extends TestCase
         $response = $this->getJson(route('tags.show', 99999));
 
         $response->assertNotFound();
+
+        $this->assertDatabaseMissing('tags', [
+            'id' => 9999,
+        ]);
     }
 }

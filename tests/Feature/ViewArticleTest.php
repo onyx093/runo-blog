@@ -48,5 +48,9 @@ class ViewArticleTest extends TestCase
         $response = $this->getJson(route('articles.show', 99999));
 
         $response->assertNotFound();
+
+        $this->assertDatabaseMissing('articles', [
+            'id' => 9999,
+        ]);
     }
 }

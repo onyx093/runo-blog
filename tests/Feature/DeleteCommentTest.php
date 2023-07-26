@@ -33,10 +33,7 @@ class DeleteCommentTest extends TestCase
     public function test_will_fail_with_a_404_if_comment_to_be_deleted_is_not_found()
     {
         $comment = Comment::factory()->createOne();
-        $data = [
-            'content' => fake()->sentence(),
-        ];
-        $response = $this->putJson(route('comments.destroy', 99999), $data);
+        $response = $this->deleteJson(route('comments.destroy', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('comments', [
             'id' => 99999,

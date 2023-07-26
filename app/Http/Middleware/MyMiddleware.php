@@ -22,12 +22,12 @@ class MyMiddleware
 
         if($result instanceof JsonResponse) {
             $responseData = $result->getData(true);
-            $debug_info = [];
-            $debug_info['execution-time-milliseconds'] = $endTime - $startTime;
-            $debug_info['requested-get-parameters'] = $request->query();
-            $debug_info['requested-post-body'] = $request->post();
-            $responseData['debug-info'] = $debug_info;
-            $result->setData($responseData);
+            $responseData['debug-info'] = [
+                'execution-time-milliseconds' => $endTime - $startTime,
+                'requested-get-parameters' => $request->query(),
+                'requested-post-body' => $request->post(),
+            ];
+            $result->setContent(json_encode($responseData));
         }
         return $result;
     }
