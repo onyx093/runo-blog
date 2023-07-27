@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 
 class CommentController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(Comment::class);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,6 +30,7 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request)
     {
         $comment = new Comment($request->validated());
+        $comment->author_id = Auth::id();
         $comment->save();
 
         return response($comment, 201);
@@ -43,7 +51,7 @@ class CommentController extends Controller
     public function update(UpdateCommentRequest $request, Comment $comment)
     {
         $comment->update($request->validated());
-        return response()->noContent();
+        return $comment;
     }
 
     /**

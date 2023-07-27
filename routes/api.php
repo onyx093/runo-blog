@@ -3,8 +3,12 @@
 use App\Http\Controllers\{
     ArticleController, CommentController, TagController
 };
+use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rules\Password;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +25,29 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('/articles', ArticleController::class);
-Route::apiResource('/comments', CommentController::class);
-Route::apiResource('/tags', TagController::class);
+$guestRoutes = ['index', 'show'];
+
+Route::middleware('auth:api')->group(function() use ($guestRoutes) {
+    Route::apiResource('/articles', ArticleController::class)->except($guestRoutes);
+    Route::apiResource('/articles', ArticleController::class)->only($guestRoutes)->withoutMiddleware('auth:api');
+
+    Route::apiResource('/comments', CommentController::class)->except($guestRoutes);
+    Route::apiResource('/comments', CommentController::class)->only($guestRoutes)->withoutMiddleware('auth:api');
+
+    Route::apiResource('/tags', TagController::class)->except($guestRoutes);
+    Route::apiResource('/tags', TagController::class)->only($guestRoutes)->withoutMiddleware('auth:api');
+});
+
+
+Route::post('/authenticate', function(Request $request) {
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required', Password::min(8)->letters()],
+    ]);
+
+    $user = User::query()->firstWhere('email', $credentials['email']);
+    if(!Hash::check($credentials['password'], $user->password)) {
+        throw new AuthenticationException();
+    }
+    return base64_encode("<<<s>>>::$user->id");
+});

@@ -8,28 +8,27 @@ use App\Models\User;
 class StoreTagTest extends TestCase
 {
     /**
-     * A basic feature test example.
+     * A basic feature test to store a tag.
      */
-    public function test_comment_can_be_stored(): void
+    public function test_tag_can_be_stored(): void
     {
         $author = User::factory()->createOne();
         $name = 'foobar';
 
-        $response = $this->postJson(
+        $response = $this->actingAs($author, 'api')->postJson(
             route('tags.store'),
             [
                 'name' => $name,
-                'author_id' => $author->id,
             ]
         );
 
         $response->assertCreated()->assertJsonIsObject()->assertJsonStructure(
             [
                 'id',
+                'author_id',
                 'name',
                 'created_at',
                 'updated_at',
-                'author_id',
             ]
         )->assertJson(
             [
@@ -39,15 +38,16 @@ class StoreTagTest extends TestCase
         );
     }
 
+    /**
+     * A basic feature test to check for required values while creating a tag.
+     */
     public function test_throw_error_if_required_values_are_not_provided(): void
     {
         $author = User::factory()->createOne();
 
-        $response = $this->postJson(
-            route('comments.store'),
-            [
-                'author_id' => $author->id,
-            ]
+        $response = $this->actingAs($author, 'api')->postJson(
+            route('tags.store'),
+            []
         );
 
         $response->assertUnprocessable()->assertJsonStructure(

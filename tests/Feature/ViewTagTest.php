@@ -38,7 +38,7 @@ class ViewTagTest extends TestCase
     }
 
     /**
-     * A basic feature test to check if a tag that doesn't exist.
+     * A basic feature test to check if a tag doesn't exist.
      */
     public function test_should_an_error_when_fetching_a_tag_that_does_not_exist(): void
     {

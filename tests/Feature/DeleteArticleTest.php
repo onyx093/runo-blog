@@ -3,8 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Article;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\User;
 use Tests\TestCase;
 
 class DeleteArticleTest extends TestCase
@@ -14,8 +13,9 @@ class DeleteArticleTest extends TestCase
      */
     public function test_delete_a_article(): void
     {
-        $article = Article::factory()->createOne();
-        $response = $this->deleteJson(route('articles.destroy', $article->id));
+        $author = User::factory()->createOne();
+        $article = Article::factory()->set('author_id', $author->id)->createOne();
+        $response = $this->actingAs($author, 'api')->deleteJson(route('articles.destroy', $article->id));
 
         $response->assertStatus(204);
 
@@ -27,14 +27,31 @@ class DeleteArticleTest extends TestCase
     }
 
     /**
+     * A basic feature test to check if error 403 forbidden is thrown if article to be deleted isn't owned by a user.
+     *
+     * @return void
+     */
+    public function test_will_fail_with_a_403_if_article_to_be_deleted_is_not_owned_by_the_user()
+    {
+        $myUser = User::factory()->createOne();
+        $yourUser = User::factory()->createOne();
+        $article = Article::factory()->set('author_id', $yourUser->id)->createOne();
+        $response = $this->actingAs($myUser, 'api')->deleteJson(route('articles.destroy', $article->id));
+        $response->assertStatus(403)->assertJsonStructure([
+            'message',
+        ]);
+    }
+
+    /**
      * A basic feature test to check if error 404 found is thrown if article to delete doesn't exist.
      *
      * @return void
      */
     public function test_will_fail_with_a_404_if_article_to_be_deleted_is_not_found()
     {
-        $article = Article::factory()->createOne();
-        $response = $this->deleteJson(route('articles.destroy', 99999));
+        $user = User::factory()->createOne();
+        $article = Article::factory()->set('author_id', $user->id)->createOne();
+        $response = $this->actingAs($user, 'api')->getJson(route('articles.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('articles', [
             'id' => 99999,

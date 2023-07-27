@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\Article;
+use App\Models\Tag;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Article;
 
 class UpdateArticleTest extends TestCase
 {
@@ -12,19 +14,43 @@ class UpdateArticleTest extends TestCase
      */
     public function test_update_a_article(): void
     {
-        $article = Article::factory()->createOne();
+        $author = User::factory()->createOne();
+        $article = Article::factory()->set('author_id', $author->id)->createOne();
+        $tags = [];
+        foreach($article->tags as $tag) {
+            $tags[] = $tag->name;
+        }
+        $tags[] = 'colours';
+        $tags[] = 'words';
         $data = [
             'title' => fake()->words(4, true),
             'content' => fake()->sentence(),
+            'tags' => $tags,
         ];
-        $response = $this->putJson(route('articles.update', $article->id), $data);
+        $response = $this->actingAs($author, 'api')->putJson(route('articles.update', $article->id), $data);
 
-        $response->assertStatus(204);
+        $response->assertOk();
 
         $this->assertDatabaseHas('articles', [
             'id' => $article->id,
             'content' => $data['content'],
             'author_id' => $article->author_id,
+        ]);
+    }
+
+    /**
+     * A basic feature test to check if error 403 forbidden is thrown if article to be updated isn't owned by a user.
+     *
+     * @return void
+     */
+    public function test_will_fail_with_a_403_if_article_to_be_updated_is_not_owned_by_the_user()
+    {
+        $myUser = User::factory()->createOne();
+        $yourUser = User::factory()->createOne();
+        $article = Article::factory()->set('author_id', $yourUser->id)->createOne();
+        $response = $this->actingAs($myUser, 'api')->putJson(route('articles.update', $article->id));
+        $response->assertStatus(403)->assertJsonStructure([
+            'message',
         ]);
     }
 
@@ -35,12 +61,9 @@ class UpdateArticleTest extends TestCase
      */
     public function test_will_fail_with_a_404_if_article_to_be_updated_is_not_found()
     {
-        $article = Article::factory()->createOne();
-        $data = [
-            'title' => fake()->words(4, true),
-            'content' => fake()->sentence(),
-        ];
-        $response = $this->putJson(route('articles.update', 99999), $data);
+        $user = User::factory()->createOne();
+        $article = Article::factory()->set('author_id', $user->id)->createOne();
+        $response = $this->actingAs($user, 'api')->getJson(route('articles.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('articles', [
             'id' => 99999,

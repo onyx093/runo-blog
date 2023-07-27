@@ -5,33 +5,26 @@ namespace Tests\Feature;
 use App\Models\Tag;
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Testing\Fluent\AssertableJson;
 
 class StoreArticleTest extends TestCase
 {
     /**
-     * A basic feature test example.
+     * A basic feature test to store a article.
      */
     public function test_article_can_be_stored(): void
     {
         $author = User::factory()->createOne();
-        $tags = Tag::factory(2)->create(['author_id' => $author->id]);
-        $tagsAsString = '';
-
-        foreach($tags as $tag)
-        {
-            $tagsAsString .= $tag->name . ',';
-        }
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
+        $tags = [$tag->name, 'colours', 'words'];
         $title = 'foobar';
         $content = 'An interesting foobar story';
 
-        $response = $this->postJson(
+        $response = $this->actingAs($author, 'api')->postJson(
             route('articles.store'),
             [
                 'title' => $title,
                 'content' => $content,
-                'tags' => $tagsAsString,
-                'author_id' => $author->id,
+                'tags' => $tags,
             ]
         );
 
@@ -40,6 +33,7 @@ class StoreArticleTest extends TestCase
                 'id',
                 'title',
                 'content',
+                'author_id',
                 'created_at',
                 'updated_at',
                 'author_id',
@@ -57,23 +51,19 @@ class StoreArticleTest extends TestCase
             }) */;
     }
 
+    /**
+     * A basic feature test to check for required values while creating a article.
+     */
     public function test_throw_error_if_required_values_are_not_provided(): void
     {
         $author = User::factory()->createOne();
-        $tags = Tag::factory(2)->create(['author_id' => $author->id]);
-        $tagsAsString = '';
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
+        $tags = [$tag->name, 'colours', 'words'];
 
-        foreach($tags as $tag)
-        {
-            $tagsAsString .= $tag->name . ',';
-        }
-        $title = 'foobar';
-
-        $response = $this->postJson(
+        $response = $this->actingAs($author, 'api')->postJson(
             route('articles.store'),
             [
-                'title' => $title,
-                'author_id' => $author->id,
+                'tags' => $tags
             ]
         );
 

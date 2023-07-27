@@ -39,7 +39,7 @@ class ViewCommentTest extends TestCase
     }
 
     /**
-     * A basic feature test to check if a comment that doesn't exist.
+     * A basic feature test to check if a comment doesn't exist.
      */
     public function test_should_an_error_when_fetching_a_comment_that_does_not_exist(): void
     {

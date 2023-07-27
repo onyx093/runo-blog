@@ -24,8 +24,7 @@ class StoreArticleRequest extends FormRequest
         return [
             'title' => ['required', 'string'],
             'content' => ['required', 'string'],
-            'tags' => ['sometimes', 'string'],
-            'author_id' => ['required', 'exists:users,id'],
+            'tags' => ['sometimes', 'array'],
         ];
     }
 }

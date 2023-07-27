@@ -6,9 +6,16 @@ use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(Article::class);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,18 +30,18 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
-        $article = new Article($request->validated());
+        $article = new Article($request->safe()->only(['title', 'content']));
+        $article->author_id = Auth::id();
         $article->save();
         if($request->has('tags'))
         {
-            foreach (explode(',', $request->tags) as $requestTag) {
-                if(!empty(trim($requestTag))){
-                    $tag = Tag::firstOrCreate([
-                        'name' => $requestTag,
-                        'author_id' => $request->validated('author_id'),
-                    ]);
-                    $article->tags()->attach($tag);
-                }
+            foreach ($request->input('tags') as $requestTag) {
+                $tag = Tag::firstOrCreate([
+                    'name' => $requestTag,
+                ], [
+                    'author_id' => $article->author_id,
+                ]);
+                $article->tags()->attach($tag);
             }
         }
 
@@ -55,8 +62,20 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
-        $article->update($request->validated());
-        return response()->noContent();
+        $article->update($request->safe()->only(['title', 'content']));
+        if($request->has('tags'))
+        {
+            $article->tags()->detach();
+            foreach ($request->input('tags') as $requestTag) {
+                $tag = Tag::firstOrCreate([
+                    'name' => $requestTag,
+                ], [
+                    'author_id' => $article->author_id,
+                ]);
+                $article->tags()->attach($tag);
+            }
+        }
+        return $article;
     }
 
     /**

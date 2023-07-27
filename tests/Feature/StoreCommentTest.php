@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Article;
+use App\Models\Comment;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -14,14 +14,14 @@ class StoreCommentTest extends TestCase
     public function test_comment_can_be_stored(): void
     {
         $author = User::factory()->createOne();
-        $article = Article::factory()->createOne();
+        $comment = Comment::factory()->set('author_id', $author->id)->makeOne();
         $content = 'foobar';
 
-        $response = $this->postJson(
+        $response = $this->actingAs($author, 'api')->postJson(
             route('comments.store'),
             [
                 'content' => $content,
-                'article_id' => $article->id,
+                'article_id' => $comment->article_id,
                 'author_id' => $author->id,
             ]
         );
@@ -30,6 +30,7 @@ class StoreCommentTest extends TestCase
             [
                 'id',
                 'article_id',
+                'author_id',
                 'content',
                 'created_at',
                 'updated_at',
@@ -37,7 +38,7 @@ class StoreCommentTest extends TestCase
             ]
         )->assertJson(
             [
-                'article_id' => $article->id,
+                'article_id' => $comment->article_id,
                 'content' => $content,
                 'author_id' => $author->id,
             ]
@@ -50,15 +51,10 @@ class StoreCommentTest extends TestCase
     public function test_throw_error_if_required_values_are_not_provided(): void
     {
         $author = User::factory()->createOne();
-        $article = Article::factory()->createOne();
-        $content = 'A new comment';
 
-        $response = $this->postJson(
+        $response = $this->actingAs($author, 'api')->postJson(
             route('comments.store'),
-            [
-                'article_id' => $article->id,
-                'author_id' => $author->id,
-            ]
+            []
         );
 
         $response->assertUnprocessable()->assertJsonStructure(

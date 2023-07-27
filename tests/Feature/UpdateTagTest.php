@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Tag;
+use App\Models\User;
 use Tests\TestCase;
 
 class UpdateTagTest extends TestCase
@@ -12,18 +13,35 @@ class UpdateTagTest extends TestCase
      */
     public function test_update_a_tag(): void
     {
-        $tag = Tag::factory()->createOne();
+        $author = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $data = [
             'name' => fake()->sentence(),
         ];
-        $response = $this->putJson(route('tags.update', $tag->id), $data);
+        $response = $this->actingAs($author, 'api')->putJson(route('tags.update', $tag->id), $data);
 
-        $response->assertStatus(204);
+        $response->assertOk();
 
         $this->assertDatabaseHas('tags', [
             'id' => $tag->id,
             'name' => $data['name'],
             'author_id' => $tag->author_id,
+        ]);
+    }
+
+    /**
+     * A basic feature test to check if error 403 forbidden is thrown if tag to be updated isn't owned by a user.
+     *
+     * @return void
+     */
+    public function test_will_fail_with_a_403_if_tag_to_be_updated_is_not_owned_by_the_user()
+    {
+        $myUser = User::factory()->createOne();
+        $yourUser = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $yourUser->id)->createOne();
+        $response = $this->actingAs($myUser, 'api')->putJson(route('tags.update', $tag->id));
+        $response->assertStatus(403)->assertJsonStructure([
+            'message',
         ]);
     }
 
@@ -34,11 +52,9 @@ class UpdateTagTest extends TestCase
      */
     public function test_will_fail_with_a_404_if_tag_to_be_updated_is_not_found()
     {
-        $tag = Tag::factory()->createOne();
-        $data = [
-            'name' => fake()->sentence(),
-        ];
-        $response = $this->putJson(route('tags.update', 99999), $data);
+        $user = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $user->id)->createOne();
+        $response = $this->actingAs($user, 'api')->getJson(route('tags.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('tags', [
             'id' => 99999,

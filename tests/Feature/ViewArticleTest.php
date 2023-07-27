@@ -39,7 +39,7 @@ class ViewArticleTest extends TestCase
     }
 
     /**
-     * A basic feature test to check if a article that doesn't exist.
+     * A basic feature test to check if a article doesn't exist.
      */
     public function test_should_an_error_when_fetching_a_article_that_does_not_exist(): void
     {

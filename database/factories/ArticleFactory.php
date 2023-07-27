@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\Article;
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,4 +25,14 @@ class ArticleFactory extends Factory
             'author_id' => User::factory(),
         ];
     }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Article $article) {
+            Tag::factory()->count(2)->create();
+            $tags = Tag::inRandomOrder()->take(rand(1, 3))->pluck('id');
+            $article->tags()->sync($tags);
+        });
+    }
+
 }

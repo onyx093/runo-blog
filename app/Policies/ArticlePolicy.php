@@ -5,23 +5,24 @@ namespace App\Policies;
 use App\Models\Article;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
 
 class ArticlePolicy
 {
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(?User $user): bool
     {
-        //
+        return true;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Article $article): bool
+    public function view(?User $user, Article $article): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +30,7 @@ class ArticlePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return Auth::id() === $user->id;
     }
 
     /**
@@ -37,7 +38,7 @@ class ArticlePolicy
      */
     public function update(User $user, Article $article): bool
     {
-        //
+        return $user->id === $article->author_id;
     }
 
     /**
@@ -45,22 +46,6 @@ class ArticlePolicy
      */
     public function delete(User $user, Article $article): bool
     {
-        //
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Article $article): bool
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Article $article): bool
-    {
-        //
+        return $user->id === $article->author_id;
     }
 }

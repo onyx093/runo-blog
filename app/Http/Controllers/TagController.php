@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(Tag::class);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,6 +30,7 @@ class TagController extends Controller
     public function store(StoreTagRequest $request)
     {
         $tag = new Tag($request->validated());
+        $tag->author_id = Auth::id();
         $tag->save();
 
         return response($tag, 201);
@@ -43,7 +51,7 @@ class TagController extends Controller
     public function update(UpdateTagRequest $request, Tag $tag)
     {
         $tag->update($request->validated());
-        return response()->noContent();
+        return $tag;
     }
 
     /**

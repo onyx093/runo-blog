@@ -2,8 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Comment;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Comment;
 
 class UpdateCommentTest extends TestCase
 {
@@ -12,13 +13,14 @@ class UpdateCommentTest extends TestCase
      */
     public function test_update_a_comment(): void
     {
-        $comment = Comment::factory()->createOne();
+        $author = User::factory()->createOne();
+        $comment = Comment::factory()->set('author_id', $author->id)->createOne();
         $data = [
             'content' => fake()->sentence(),
         ];
-        $response = $this->putJson(route('comments.update', $comment->id), $data);
+        $response = $this->actingAs($author, 'api')->putJson(route('comments.update', $comment->id), $data);
 
-        $response->assertStatus(204);
+        $response->assertOk();
 
         $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
@@ -29,17 +31,31 @@ class UpdateCommentTest extends TestCase
     }
 
     /**
+     * A basic feature test to check if error 403 forbidden is thrown if comment to be updated isn't owned by a user.
+     *
+     * @return void
+     */
+    public function test_will_fail_with_a_403_if_comment_to_be_updated_is_not_owned_by_the_user()
+    {
+        $myUser = User::factory()->createOne();
+        $yourUser = User::factory()->createOne();
+        $comment = Comment::factory()->set('author_id', $yourUser->id)->createOne();
+        $response = $this->actingAs($myUser, 'api')->putJson(route('comments.update', $comment->id));
+        $response->assertStatus(403)->assertJsonStructure([
+            'message',
+        ]);
+    }
+
+    /**
      * A basic feature test to check if error 404 found is thrown if comment to update doesn't exist.
      *
      * @return void
      */
     public function test_will_fail_with_a_404_if_comment_to_be_updated_is_not_found()
     {
-        $comment = Comment::factory()->createOne();
-        $data = [
-            'content' => fake()->sentence(),
-        ];
-        $response = $this->putJson(route('comments.update', 99999), $data);
+        $user = User::factory()->createOne();
+        $comment = Comment::factory()->set('author_id', $user->id)->createOne();
+        $response = $this->actingAs($user, 'api')->getJson(route('comments.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('comments', [
             'id' => 99999,

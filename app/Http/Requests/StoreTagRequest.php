@@ -23,7 +23,6 @@ class StoreTagRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'author_id' => ['required', 'exists:users,id'],
         ];
     }
 }
