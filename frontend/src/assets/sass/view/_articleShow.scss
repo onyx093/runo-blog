@@ -1,8 +1,8 @@
-.article-content {
+.articleContent {
     background-color: $white;
 }
 
-.article-content__inner {
+.articleContent__inner {
     @include container;
     padding: 100px 15px;
 
@@ -29,7 +29,7 @@
     }
 }
 
-.article-content__footer {
+.articleContent__footer {
     margin-top: 55px;
     padding: 55px 15px;
     border-top: 1px solid #c4c4c4;

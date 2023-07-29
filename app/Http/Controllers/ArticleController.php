@@ -53,7 +53,7 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        $article->load(['comments', 'tags']);
+        $article->load(['comments.author', 'tags', 'author']);
         return $article;
     }
 

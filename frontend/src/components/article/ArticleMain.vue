@@ -1,22 +1,35 @@
 <template>
-    <article class="main-article">
-        <div class="main-article__bg">
+    <article class="mainArticle">
+        <div class="mainArticle__bg">
             <img src="/images/main_bg.jpg" alt="">
         </div>
-        <div class="main-article__inner">
+        <div class="mainArticle__inner">
             <ArticleCategory />
-            <h2 class="main-article__heading">Richard Norton photorealistic rendering as real photos</h2>
-            <p class="main-article__content">
-                <time class="main-article__content--time">18:00</time>
-                <span class="main-article__content-divider"></span>
-                <span class="main-article__content-text">Progressively incentivize cooperative systems through technically sound functionalities. The credibly productive seamless data.</span>
+            <h2 class="mainArticle__heading">
+                <router-link class="mainArticle__headingLink" :to="{name: 'article.show', params: { id: article.id }}">
+                    {{ article.title }}
+                </router-link>
+            </h2>
+            <p class="mainArticle__content">
+                <time class="mainArticle__content--time">{{ formattedDate }}</time>
+                <span class="mainArticle__contentDivider"></span>
+                <span class="mainArticle__contentText">{{ article.content }}</span>
             </p>
         </div>
     </article>
 </template>
 
 <script setup>
+import { computed, defineProps } from 'vue';
 import ArticleCategory from '@/components/article/ArticleCategory.vue';
+import { format } from 'date-fns';
 
+const props = defineProps({
+    article: {
+        type: Object,
+        required: true,
+    }
+});
 
+const formattedDate = computed( () => format(new Date(props.article.created_at), 'k:mm'));
 </script>

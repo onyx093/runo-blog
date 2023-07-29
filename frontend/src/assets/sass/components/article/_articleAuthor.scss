@@ -1,17 +1,17 @@
-.article__author-container {
+.article__authorContainer {
     display: flex;
     align-items: center;
     margin: 15px;
 }
 
-.article__author-image {
+.article__authorImage {
     border-radius: 50%;
     width: 50px;
     height: 50px;
     margin-right: 20px;
 }
 
-.article__author-heading {
+.article__authorHeading {
     @include unset;
     display: block;
     font-family: $loraFont;
@@ -21,7 +21,7 @@
     margin-bottom: 10px;
 }
 
-.article__author-role {
+.article__authorRole {
     @include unset;
     display: block;
     font-family: $loraFont;

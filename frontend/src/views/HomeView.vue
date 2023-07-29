@@ -1,27 +1,44 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue';
 import ArticleCard from '@/components/article/ArticleCard.vue';
 import ArticleMain from '@/components/article/ArticleMain.vue';
 import HomeCategories from '@/components/homepage/HomeCategories.vue'
 import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
+import Article from '@/requests/Article.js';
 
+const articles = ref([]);
+
+const featuredArticle = computed( () => articles.value[0] );
+const editorsPickArticles = ref([]);
+
+onMounted( () => {
+  Article.index().then( response => {
+      articles.value = response.data;
+  });
+
+  Article.index().then(editorsPickResponse => {
+      editorsPickArticles.value = editorsPickResponse.data.slice(0, 3);
+  });
+
+});
 </script>
 
 <template>
   <main>
-    <ArticleMain />
+    <ArticleMain v-if="featuredArticle" :article="featuredArticle" />
 
     <section class="section">
         <div class="section__inner">
             <HomeCategories />
 
             <div class="articles">
-                <ArticleCard :imgWidth="310" :imgHeight="280" v-for="n in 8" :key="n" />
+                <ArticleCard v-for="article in articles" :key="article.id" :article="article" :imgWidth="310" :imgHeight="280" />
             </div>
 
             <h2 class="section__heading">Editor's Pick</h2>
 
             <div class="articles articles--related">
-                <RelatedArticleCard :imgWidth="420" :imgHeight="350" :floatingText="true" v-for="n in 3" :key="n" />
+                <RelatedArticleCard v-for="article in editorsPickArticles" :key="article.id" :article="article" :imgWidth="420" :imgHeight="350" :floatingText="true" />
             </div>
 
         </div>

@@ -3,18 +3,18 @@
         <div class="header__inner">
             <h1 class="header__title">LevelUp blog</h1>
             <nav class="header__nav">
-                <ul class="header__nav-list">
+                <ul class="header__navList">
                     <li class="header__nav-item">
-                        <router-link class="header__nav-item-link" :to="{name: 'home'}">Home</router-link>
+                        <router-link class="header__navItemLink" :to="{name: 'home'}">Home</router-link>
                     </li>
                     <li class="header__nav-item">
-                        <router-link class="header__nav-item-link" to="#">About</router-link>
+                        <router-link class="header__navItemLink" to="#">About</router-link>
                     </li>
                     <li class="header__nav-item">
-                        <router-link class="header__nav-item-link" :to="{name: 'article.show'}">Articles</router-link>
+                        <router-link class="header__navItemLink" :to="{name: 'articles.index'}">Articles</router-link>
                     </li>
                     <li class="header__nav-item">
-                        <router-link class="header__nav-item-link" to="#">Sign in</router-link>
+                        <router-link class="header__navItemLink" to="#">Sign in</router-link>
                     </li>
                 </ul>
             </nav>

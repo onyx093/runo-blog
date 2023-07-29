@@ -1,15 +1,15 @@
-.article-category__list {
+.articleCategory__list {
     display: flex;
     padding-left: 0;
 }
 
-.article-category__list--articleCard {
+.articleCategory__list--articleCard {
     position: absolute;
     right: 20px;
     z-index: 2;
 }
 
-.article-category__item {
+.articleCategory__item {
     list-style: none;
     margin-left: 20px;
 
@@ -18,7 +18,7 @@
     }
 }
 
-.article-category__item-link {
+.articleCategory__itemLink {
     background-color: rgba(255, 255, 255, 0.15);
     padding: 5px 10px;
     border-radius: 8px;
@@ -35,10 +35,10 @@
     }
 }
 
-.article-category__list--article-show {
+.articleCategory__list--articleShow {
     margin-top: 50px;
-    
-    .article-category__item-link {
+
+    .articleCategory__itemLink {
         border-radius: 5px;
         border: 1px solid #e5e5e5;
         background-color: $white;

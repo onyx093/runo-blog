@@ -1,37 +1,50 @@
 <template>
-    <article>
-        <section class="main-article">
-            <div class="main-article__bg">
+    <article v-if="article">
+        <section class="mainArticle">
+            <div class="mainArticle__bg">
                 <img src="/images/show_article_bg.jpg" alt="">
             </div>
-            <div class="main-article__inner main-article__inner--article-show">
+            <div class="mainArticle__inner mainArticle__inner--articleShow">
                 <ArticleCategory />
-                <h2 class="main-article__heading">Richard Norton photorealistic rendering as real photos</h2>
-                <p class="main-article__content">
-                    <span class="main-article__content-text">Progressively incentivize cooperative systems through technically sound functionalities.<br />The credibly productive seamless data.</span>
+                <h2 class="mainArticle__heading">{{ article.title }}</h2>
+                <p class="mainArticle__content">
+                    <span class="mainArticle__contentText">{{ article.content }}</span>
                 </p>
-                <p class="main-article__author">By Jennifer Lawrence</p>
+                <p class="mainArticle__author">{{ article.author.name }}</p>
             </div>
         </section>
-        <section class="article-content">
-            <div class="article-content__inner">
-                <div class="article-content__text">
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vitae nihil hic, incidunt vero earum odit consequatur excepturi voluptatem culpa dignissimos, accusantium rem molestiae id! Aspernatur reiciendis consequuntur id a amet suscipit vero, perferendis quia accusamus commodi cumque dolores sint repellat. Et commodi placeat praesentium earum voluptate ea nesciunt aliquam? Quae?</p>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vitae nihil hic, incidunt vero earum odit consequatur excepturi voluptatem culpa dignissimos, accusantium rem molestiae id! Aspernatur reiciendis consequuntur id a amet suscipit vero, perferendis quia accusamus commodi cumque dolores sint repellat. Et commodi placeat praesentium earum voluptate ea nesciunt aliquam? Quae?</p>
-                    <blockquote>Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique eaque cum in tenetur dolorum incidunt asperiores dignissimos maxime quidem numquam?</blockquote>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vitae nihil hic, incidunt vero earum odit consequatur excepturi voluptatem culpa dignissimos, accusantium rem molestiae id! Aspernatur reiciendis consequuntur id a amet suscipit vero, perferendis quia accusamus commodi cumque dolores sint repellat. Et commodi placeat praesentium earum voluptate ea nesciunt aliquam? Quae?</p>
+        <section class="articleContent">
+            <div class="articleContent__inner">
+                <div class="articleContent__text">
+                    {{ article.content }}
                 </div>
-                <ArticleCategory class="article-category__list--article-show" />
+                <ArticleCategory class="articleCategory__list--articleShow" />
 
-                <footer class="article-content__footer">
-                    <ArticleAuthor />
+                <footer class="articleContent__footer">
+                    <ArticleAuthor :author="article.author" />
                 </footer>
+
+                <CommentList :comments="article.comments" />
             </div>
         </section>
     </article>
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import ArticleCategory from '@/components/article/ArticleCategory.vue';
 import ArticleAuthor from '@/components/article/ArticleAuthor.vue';
+import CommentList from '@/components/comment/CommentList.vue'
+import Article from '../requests/Article';
+
+const route = useRoute();
+const article = ref(null);
+
+onMounted(() => {
+    Article.show(route.params.id).then( response => {
+        article.value = response.data;
+    });
+});
+
 </script>

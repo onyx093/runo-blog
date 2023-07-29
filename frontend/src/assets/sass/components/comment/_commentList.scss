@@ -1,0 +1,55 @@
+.commentList__formWrapper {
+    border-radius: 20px;
+    background-color: #e7e7e7;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.commentList__form {
+    position: relative;
+}
+
+.commentList__input {
+    border-radius: 21px;
+    background-color: #f8f9fa;
+    width: 100%;
+    max-width: 100%;
+    min-height: 50px;
+    padding: 20px;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+.commentList__buttonWrapper {
+    position: absolute;
+    right: 36px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: flex-end;
+}
+
+.commentList__button {
+    border-radius: 21px;
+    background-color: #d4a373;
+    right: 30px;
+    border: none;
+    padding: 10px 20px;
+    color: $white;
+    text-align: center;
+    font-family: $loraFont;
+    font-size: 12px;
+    font-weight: 400;
+    margin-bottom: 23px;
+}
+
+.commentList__noComments {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 80px;
+}
+
+.commentList__formError {
+    margin-bottom: 0;
+    color: red;
+}

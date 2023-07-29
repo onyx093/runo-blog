@@ -10,7 +10,12 @@ const router = createRouter({
       component: HomeView,
     },
     {
-        path: '/article-show',
+        path: '/articles',
+        name: 'articles.index',
+        component: () => import('../views/ArticleIndex.vue'),
+    },
+    {
+        path: '/article/:id',
         name: 'article.show',
         component: () => import('../views/ArticleShow.vue'),
     },

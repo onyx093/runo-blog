@@ -1,6 +1,6 @@
 <template>
-    <ul class="article-category__list">
-        <li class="article-category__item"><a href="#" class="article-category__item-link">Adventure</a></li>
-        <li class="article-category__item"><a href="#" class="article-category__item-link">Adventure</a></li>
+    <ul class="articleCategory__list">
+        <li class="articleCategory__item"><a href="#" class="articleCategory__itemLink">Adventure</a></li>
+        <li class="articleCategory__item"><a href="#" class="articleCategory__itemLink">Adventure</a></li>
     </ul>
 </template>

@@ -33,7 +33,7 @@
     margin-left: auto;
 }
 
-.section__category-link {
+.section__categoryLink {
     font-family: $loraFont;
     font-weight: 700;
     font-size: 0.875rem;
@@ -47,6 +47,6 @@
     }
 }
 
-.section__category-link--active {
+.section__categoryLink--active {
     color: $primaryColor;
 }

@@ -31,7 +31,7 @@ Route::middleware('auth:api')->group(function() use ($guestRoutes) {
     Route::apiResource('/articles', ArticleController::class)->except($guestRoutes);
     Route::apiResource('/articles', ArticleController::class)->only($guestRoutes)->withoutMiddleware('auth:api');
 
-    Route::apiResource('/comments', CommentController::class)->except($guestRoutes);
+    Route::apiResource('/comments', CommentController::class)->except($guestRoutes)->withoutMiddleware('auth:api');
     Route::apiResource('/comments', CommentController::class)->only($guestRoutes)->withoutMiddleware('auth:api');
 
     Route::apiResource('/tags', TagController::class)->except($guestRoutes);
