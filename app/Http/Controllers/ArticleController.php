@@ -21,7 +21,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::query()->with(['comments', 'author', 'tags'])->get();
+        $articles = Article::query()->with(['comments', 'author', 'tags'])->paginate(8);
         return $articles;
     }
 

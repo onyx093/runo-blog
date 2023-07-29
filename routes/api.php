@@ -30,14 +30,14 @@ $guestRoutes = ['index', 'show'];
 
 Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
     Route::apiResource('/articles', ArticleController::class)->except($guestRoutes);
-    Route::apiResource('/articles', ArticleController::class)->only($guestRoutes)->withoutMiddleware('auth:sanctum');
-
-    Route::apiResource('/comments', CommentController::class)->except($guestRoutes)->withoutMiddleware('auth:sanctum');
-    Route::apiResource('/comments', CommentController::class)->only($guestRoutes)->withoutMiddleware('auth:sanctum');
-
+    Route::apiResource('/comments', CommentController::class)->except($guestRoutes);
     Route::apiResource('/tags', TagController::class)->except($guestRoutes);
-    Route::apiResource('/tags', TagController::class)->only($guestRoutes)->withoutMiddleware('auth:sanctum');
+
 });
+
+Route::apiResource('/articles', ArticleController::class)->only($guestRoutes);
+Route::apiResource('/comments', CommentController::class)->only($guestRoutes);
+Route::apiResource('/tags', TagController::class)->only($guestRoutes);
 
 
 Route::post('/authenticate', function(Request $request) {

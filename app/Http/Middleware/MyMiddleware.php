@@ -22,11 +22,11 @@ class MyMiddleware
 
         if($result instanceof JsonResponse) {
             $responseData = $result->getData(true);
-            /* $responseData['debug-info'] = [
+            $responseData['debug-info'] = [
                 'execution-time-milliseconds' => $endTime - $startTime,
                 'requested-get-parameters' => $request->query(),
                 'requested-post-body' => $request->post(),
-            ]; */
+            ];
             $result->setContent(json_encode($responseData));
         }
         return $result;

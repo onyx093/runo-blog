@@ -20,7 +20,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        $comments = Comment::with(['author', 'article'])->get();
+        $comments = Comment::with(['author', 'article'])->paginate(8);
         return $comments;
     }
 

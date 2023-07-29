@@ -20,7 +20,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::with(['articles'])->get();
+        $tags = Tag::with(['articles'])->paginate(8);
         return $tags;
     }
 
