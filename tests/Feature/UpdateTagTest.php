@@ -18,7 +18,7 @@ class UpdateTagTest extends TestCase
         $data = [
             'name' => fake()->sentence(),
         ];
-        $response = $this->actingAs($author, 'api')->putJson(route('tags.update', $tag->id), $data);
+        $response = $this->actingAs($author)->putJson(route('tags.update', $tag->id), $data);
 
         $response->assertOk();
 
@@ -39,7 +39,7 @@ class UpdateTagTest extends TestCase
         $myUser = User::factory()->createOne();
         $yourUser = User::factory()->createOne();
         $tag = Tag::factory()->set('author_id', $yourUser->id)->createOne();
-        $response = $this->actingAs($myUser, 'api')->putJson(route('tags.update', $tag->id));
+        $response = $this->actingAs($myUser)->putJson(route('tags.update', $tag->id));
         $response->assertStatus(403)->assertJsonStructure([
             'message',
         ]);
@@ -52,9 +52,9 @@ class UpdateTagTest extends TestCase
      */
     public function test_will_fail_with_a_404_if_tag_to_be_updated_is_not_found()
     {
-        $user = User::factory()->createOne();
-        $tag = Tag::factory()->set('author_id', $user->id)->createOne();
-        $response = $this->actingAs($user, 'api')->getJson(route('tags.show', 99999));
+        $author = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
+        $response = $this->actingAs($author)->putJson(route('tags.update', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('tags', [
             'id' => 99999,

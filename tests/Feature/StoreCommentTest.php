@@ -17,7 +17,7 @@ class StoreCommentTest extends TestCase
         $comment = Comment::factory()->set('author_id', $author->id)->makeOne();
         $content = 'foobar';
 
-        $response = $this->actingAs($author, 'api')->postJson(
+        $response = $this->actingAs($author)->postJson(
             route('comments.store'),
             [
                 'content' => $content,
@@ -52,7 +52,7 @@ class StoreCommentTest extends TestCase
     {
         $author = User::factory()->createOne();
 
-        $response = $this->actingAs($author, 'api')->postJson(
+        $response = $this->actingAs($author)->postJson(
             route('comments.store'),
             []
         );

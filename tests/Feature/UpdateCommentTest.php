@@ -18,7 +18,7 @@ class UpdateCommentTest extends TestCase
         $data = [
             'content' => fake()->sentence(),
         ];
-        $response = $this->actingAs($author, 'api')->putJson(route('comments.update', $comment->id), $data);
+        $response = $this->actingAs($author)->putJson(route('comments.update', $comment->id), $data);
 
         $response->assertOk();
 
@@ -40,7 +40,7 @@ class UpdateCommentTest extends TestCase
         $myUser = User::factory()->createOne();
         $yourUser = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $yourUser->id)->createOne();
-        $response = $this->actingAs($myUser, 'api')->putJson(route('comments.update', $comment->id));
+        $response = $this->actingAs($myUser)->putJson(route('comments.update', $comment->id));
         $response->assertStatus(403)->assertJsonStructure([
             'message',
         ]);
@@ -53,9 +53,9 @@ class UpdateCommentTest extends TestCase
      */
     public function test_will_fail_with_a_404_if_comment_to_be_updated_is_not_found()
     {
-        $user = User::factory()->createOne();
-        $comment = Comment::factory()->set('author_id', $user->id)->createOne();
-        $response = $this->actingAs($user, 'api')->getJson(route('comments.show', 99999));
+        $author = User::factory()->createOne();
+        $comment = Comment::factory()->set('author_id', $author->id)->createOne();
+        $response = $this->actingAs($author)->putJson(route('comments.update', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('comments', [
             'id' => 99999,

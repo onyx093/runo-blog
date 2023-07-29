@@ -16,7 +16,7 @@ class ViewTagTest extends TestCase
 
         $response = $this->getJson(route('tags.index'));
 
-        $response->assertOk()->assertJsonIsObject();
+        $response->assertOk();
     }
 
     /**

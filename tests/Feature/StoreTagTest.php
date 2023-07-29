@@ -15,7 +15,7 @@ class StoreTagTest extends TestCase
         $author = User::factory()->createOne();
         $name = 'foobar';
 
-        $response = $this->actingAs($author, 'api')->postJson(
+        $response = $this->actingAs($author)->postJson(
             route('tags.store'),
             [
                 'name' => $name,
@@ -45,7 +45,7 @@ class StoreTagTest extends TestCase
     {
         $author = User::factory()->createOne();
 
-        $response = $this->actingAs($author, 'api')->postJson(
+        $response = $this->actingAs($author)->postJson(
             route('tags.store'),
             []
         );

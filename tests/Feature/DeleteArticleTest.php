@@ -15,7 +15,7 @@ class DeleteArticleTest extends TestCase
     {
         $author = User::factory()->createOne();
         $article = Article::factory()->set('author_id', $author->id)->createOne();
-        $response = $this->actingAs($author, 'api')->deleteJson(route('articles.destroy', $article->id));
+        $response = $this->actingAs($author)->deleteJson(route('articles.destroy', $article->id));
 
         $response->assertStatus(204);
 
@@ -36,7 +36,7 @@ class DeleteArticleTest extends TestCase
         $myUser = User::factory()->createOne();
         $yourUser = User::factory()->createOne();
         $article = Article::factory()->set('author_id', $yourUser->id)->createOne();
-        $response = $this->actingAs($myUser, 'api')->deleteJson(route('articles.destroy', $article->id));
+        $response = $this->actingAs($myUser)->deleteJson(route('articles.destroy', $article->id));
         $response->assertStatus(403)->assertJsonStructure([
             'message',
         ]);
@@ -51,7 +51,7 @@ class DeleteArticleTest extends TestCase
     {
         $user = User::factory()->createOne();
         $article = Article::factory()->set('author_id', $user->id)->createOne();
-        $response = $this->actingAs($user, 'api')->getJson(route('articles.show', 99999));
+        $response = $this->actingAs($user)->getJson(route('articles.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('articles', [
             'id' => 99999,

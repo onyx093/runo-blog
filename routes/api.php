@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,15 +28,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 $guestRoutes = ['index', 'show'];
 
-Route::middleware('auth:api')->group(function() use ($guestRoutes) {
+Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
     Route::apiResource('/articles', ArticleController::class)->except($guestRoutes);
-    Route::apiResource('/articles', ArticleController::class)->only($guestRoutes)->withoutMiddleware('auth:api');
+    Route::apiResource('/articles', ArticleController::class)->only($guestRoutes)->withoutMiddleware('auth:sanctum');
 
-    Route::apiResource('/comments', CommentController::class)->except($guestRoutes)->withoutMiddleware('auth:api');
-    Route::apiResource('/comments', CommentController::class)->only($guestRoutes)->withoutMiddleware('auth:api');
+    Route::apiResource('/comments', CommentController::class)->except($guestRoutes)->withoutMiddleware('auth:sanctum');
+    Route::apiResource('/comments', CommentController::class)->only($guestRoutes)->withoutMiddleware('auth:sanctum');
 
     Route::apiResource('/tags', TagController::class)->except($guestRoutes);
-    Route::apiResource('/tags', TagController::class)->only($guestRoutes)->withoutMiddleware('auth:api');
+    Route::apiResource('/tags', TagController::class)->only($guestRoutes)->withoutMiddleware('auth:sanctum');
 });
 
 
@@ -49,5 +50,25 @@ Route::post('/authenticate', function(Request $request) {
     if(!Hash::check($credentials['password'], $user->password)) {
         throw new AuthenticationException();
     }
-    return base64_encode("<<<s>>>::$user->id");
+    $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
+    return ['token' => $sanctumToken];
+});
+
+Route::post('/register', function(Request $request) {
+    $credentials = $request->validate([
+        'name' => ['required', 'string'],
+        'email' => ['required', 'email'],
+        'password' => ['required', Password::min(8)->letters()],
+    ]);
+
+    $user = User::query()->firstWhere('email', $credentials['email']);
+    if(!is_null($user)) {
+        throw ValidationException::withMessages(['User with email already exists']);
+    }
+
+    $user = new User($credentials);
+    $user->save();
+
+    $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
+    return ['token' => $sanctumToken];
 });

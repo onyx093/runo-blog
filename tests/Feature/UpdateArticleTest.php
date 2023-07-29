@@ -27,7 +27,7 @@ class UpdateArticleTest extends TestCase
             'content' => fake()->sentence(),
             'tags' => $tags,
         ];
-        $response = $this->actingAs($author, 'api')->putJson(route('articles.update', $article->id), $data);
+        $response = $this->actingAs($author)->putJson(route('articles.update', $article->id), $data);
 
         $response->assertOk();
 
@@ -48,7 +48,7 @@ class UpdateArticleTest extends TestCase
         $myUser = User::factory()->createOne();
         $yourUser = User::factory()->createOne();
         $article = Article::factory()->set('author_id', $yourUser->id)->createOne();
-        $response = $this->actingAs($myUser, 'api')->putJson(route('articles.update', $article->id));
+        $response = $this->actingAs($myUser)->putJson(route('articles.update', $article->id));
         $response->assertStatus(403)->assertJsonStructure([
             'message',
         ]);
@@ -63,7 +63,7 @@ class UpdateArticleTest extends TestCase
     {
         $user = User::factory()->createOne();
         $article = Article::factory()->set('author_id', $user->id)->createOne();
-        $response = $this->actingAs($user, 'api')->getJson(route('articles.show', 99999));
+        $response = $this->actingAs($user)->putJson(route('articles.update', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('articles', [
             'id' => 99999,

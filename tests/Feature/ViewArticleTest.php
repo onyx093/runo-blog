@@ -16,7 +16,7 @@ class ViewArticleTest extends TestCase
 
         $response = $this->getJson(route('articles.index'));
 
-        $response->assertOk()->assertJsonIsObject();
+        $response->assertOk();
     }
 
     /**

@@ -17,7 +17,7 @@ class DeleteTagTest extends TestCase
     {
         $author = User::factory()->createOne();
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
-        $response = $this->actingAs($author, 'api')->deleteJson(route('tags.destroy', $tag->id));
+        $response = $this->actingAs($author)->deleteJson(route('tags.destroy', $tag->id));
 
         $response->assertStatus(204);
 
@@ -38,7 +38,7 @@ class DeleteTagTest extends TestCase
         $myUser = User::factory()->createOne();
         $yourUser = User::factory()->createOne();
         $tag = Tag::factory()->set('author_id', $yourUser->id)->createOne();
-        $response = $this->actingAs($myUser, 'api')->deleteJson(route('tags.destroy', $tag->id));
+        $response = $this->actingAs($myUser)->deleteJson(route('tags.destroy', $tag->id));
         $response->assertStatus(403)->assertJsonStructure([
             'message',
         ]);
@@ -51,9 +51,9 @@ class DeleteTagTest extends TestCase
      */
     public function test_will_fail_with_a_404_if_tag_to_be_deleted_is_not_found()
     {
-        $user = User::factory()->createOne();
-        $tag = Tag::factory()->set('author_id', $user->id)->createOne();
-        $response = $this->actingAs($user, 'api')->getJson(route('tags.show', 99999));
+        $author = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
+        $response = $this->actingAs($author)->getJson(route('tags.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('tags', [
             'id' => 99999,

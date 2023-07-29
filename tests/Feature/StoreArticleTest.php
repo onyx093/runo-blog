@@ -19,7 +19,7 @@ class StoreArticleTest extends TestCase
         $title = 'foobar';
         $content = 'An interesting foobar story';
 
-        $response = $this->actingAs($author, 'api')->postJson(
+        $response = $this->actingAs($author)->postJson(
             route('articles.store'),
             [
                 'title' => $title,
@@ -60,7 +60,7 @@ class StoreArticleTest extends TestCase
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $tags = [$tag->name, 'colours', 'words'];
 
-        $response = $this->actingAs($author, 'api')->postJson(
+        $response = $this->actingAs($author)->postJson(
             route('articles.store'),
             [
                 'tags' => $tags

@@ -12,7 +12,7 @@ class CommentController extends Controller
 
     public function __construct()
     {
-        // $this->authorizeResource(Comment::class);
+        $this->authorizeResource(Comment::class);
     }
 
     /**

@@ -15,7 +15,7 @@ class DeleteCommentTest extends TestCase
     {
         $author = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $author->id)->createOne();
-        $response = $this->actingAs($author, 'api')->deleteJson(route('comments.destroy', $comment->id));
+        $response = $this->actingAs($author)->deleteJson(route('comments.destroy', $comment->id));
 
         $response->assertStatus(204);
 
@@ -37,7 +37,7 @@ class DeleteCommentTest extends TestCase
         $myUser = User::factory()->createOne();
         $yourUser = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $yourUser->id)->createOne();
-        $response = $this->actingAs($myUser, 'api')->deleteJson(route('comments.destroy', $comment->id));
+        $response = $this->actingAs($myUser)->deleteJson(route('comments.destroy', $comment->id));
         $response->assertStatus(403)->assertJsonStructure([
             'message',
         ]);
@@ -52,7 +52,7 @@ class DeleteCommentTest extends TestCase
     {
         $user = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $user->id)->createOne();
-        $response = $this->actingAs($user, 'api')->getJson(route('comments.show', 99999));
+        $response = $this->actingAs($user)->getJson(route('comments.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('comments', [
             'id' => 99999,

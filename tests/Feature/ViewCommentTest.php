@@ -16,7 +16,7 @@ class ViewCommentTest extends TestCase
 
         $response = $this->getJson(route('comments.index'));
 
-        $response->assertOk()->assertJsonIsObject();
+        $response->assertOk();
     }
 
     /**

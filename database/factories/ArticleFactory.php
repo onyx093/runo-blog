@@ -26,13 +26,4 @@ class ArticleFactory extends Factory
         ];
     }
 
-    public function configure()
-    {
-        return $this->afterCreating(function (Article $article) {
-            Tag::factory()->count(2)->create();
-            $tags = Tag::inRandomOrder()->take(rand(1, 3))->pluck('id');
-            $article->tags()->sync($tags);
-        });
-    }
-
 }
