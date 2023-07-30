@@ -14,10 +14,20 @@
                         <router-link class="header__navItemLink" :to="{name: 'articles.index'}">Articles</router-link>
                     </li>
                     <li class="header__nav-item">
-                        <router-link class="header__navItemLink" to="#">Sign in</router-link>
+                        <a class="header__navItemLink" href="#" @click.prevent="emits('update:loginModalOpened', true)">Sign in</a>
                     </li>
                 </ul>
             </nav>
         </div>
     </header>
 </template>
+
+<script setup>
+import { defineProps, defineEmits } from 'vue';
+
+defineProps({
+    loginModalOpened: Boolean,
+});
+
+const emits = defineEmits(['update:loginModalOpened']);
+</script>

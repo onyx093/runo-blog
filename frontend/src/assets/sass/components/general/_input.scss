@@ -1,0 +1,18 @@
+.input__group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input__label {
+    color: #818181;
+    font-family: $loraFont;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.input {
+    border: 1px solid #495057;
+    background-color: $white;
+    padding: 10px;
+}

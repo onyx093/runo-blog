@@ -1,0 +1,14 @@
+.button {
+    background-color: #d4a373;
+    color: $white;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: 0.5s;
+
+    &:hover {
+        background-color: #c48f5f;
+    }
+}
