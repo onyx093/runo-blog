@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 
@@ -20,7 +21,32 @@ class CommentController extends Controller
      */
     public function index()
     {
-        $comments = Comment::with(['author', 'article'])->paginate(8);
+        $comments = Comment::query()
+                    ->with(['author', 'article'])
+                    ->when(
+                        request('article_id'),
+                        function(Builder $query, string $authorId) {
+                            $query->where('article_id', '=', $authorId);
+                        }
+                    )
+                    ->when(
+                        request('created_after'),
+                        function (Builder $query, $createdAfter) {
+                            $query->where('created_at', '>', $createdAfter);
+                        }
+                    )
+                    ->when(
+                        request('author_email'),
+                        function (Builder $query, string $authorEmail) {
+                            $query->whereHas('author', fn ($a) => $a->where('email', $authorEmail));
+                        }
+                    )
+                    ->when(
+                        request('search'),
+                        fn (Builder $query, string $searchTerm) => $query
+                            ->where('content', 'ILIKE', "%$searchTerm%"),
+                    )
+                    ->paginate(8);
         return $comments;
     }
 

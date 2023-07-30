@@ -53,7 +53,7 @@ class DeleteTagTest extends TestCase
     {
         $author = User::factory()->createOne();
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
-        $response = $this->actingAs($author)->getJson(route('tags.show', 99999));
+        $response = $this->actingAs($author)->deleteJson(route('tags.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('tags', [
             'id' => 99999,

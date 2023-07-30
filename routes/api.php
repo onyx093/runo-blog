@@ -1,15 +1,13 @@
 <?php
 
 use App\Http\Controllers\{
-    ArticleController, CommentController, TagController
+    ArticleController,
+    ArticleCommentController,
+    CommentController,
+    TagController,
+    UserController
 };
-use App\Models\User;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Validation\Rules\Password;
-use Illuminate\Validation\ValidationException;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,53 +20,30 @@ use Illuminate\Validation\ValidationException;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Login, register and logout
+Route::post('/authenticate', [UserController::class, 'login']);
+Route::post('/register', [UserController::class, 'register']);
+Route::get('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
 
 $guestRoutes = ['index', 'show'];
 
+// Authenticated routes
 Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
     Route::apiResource('/articles', ArticleController::class)->except($guestRoutes);
     Route::apiResource('/comments', CommentController::class)->except($guestRoutes);
     Route::apiResource('/tags', TagController::class)->except($guestRoutes);
+    Route::apiResource('/users', UserController::class)->except($guestRoutes);
+
+    Route::post('/articles/{article}/comments', [ArticleCommentController::class, 'store'])->name('articles.comments.store');
+
+    Route::get('/my', [UserController::class, 'my']);
 
 });
 
+// Guest routes
 Route::apiResource('/articles', ArticleController::class)->only($guestRoutes);
 Route::apiResource('/comments', CommentController::class)->only($guestRoutes);
 Route::apiResource('/tags', TagController::class)->only($guestRoutes);
+Route::apiResource('/users', UserController::class)->only($guestRoutes);
 
-
-Route::post('/authenticate', function(Request $request) {
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required', Password::min(8)->letters()],
-    ]);
-
-    $user = User::query()->firstWhere('email', $credentials['email']);
-    if(!Hash::check($credentials['password'], $user->password)) {
-        throw new AuthenticationException();
-    }
-    $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
-    return ['token' => $sanctumToken];
-});
-
-Route::post('/register', function(Request $request) {
-    $credentials = $request->validate([
-        'name' => ['required', 'string'],
-        'email' => ['required', 'email'],
-        'password' => ['required', Password::min(8)->letters()],
-    ]);
-
-    $user = User::query()->firstWhere('email', $credentials['email']);
-    if(!is_null($user)) {
-        throw ValidationException::withMessages(['User with email already exists']);
-    }
-
-    $user = new User($credentials);
-    $user->save();
-
-    $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
-    return ['token' => $sanctumToken];
-});
+Route::get('/articles/{article}/comments', [ArticleCommentController::class, 'show'])->name('articles.comments.show');

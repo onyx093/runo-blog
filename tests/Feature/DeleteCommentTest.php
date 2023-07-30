@@ -52,7 +52,7 @@ class DeleteCommentTest extends TestCase
     {
         $user = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $user->id)->createOne();
-        $response = $this->actingAs($user)->getJson(route('comments.show', 99999));
+        $response = $this->actingAs($user)->deleteJson(route('comments.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('comments', [
             'id' => 99999,

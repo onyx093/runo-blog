@@ -51,7 +51,7 @@ class DeleteArticleTest extends TestCase
     {
         $user = User::factory()->createOne();
         $article = Article::factory()->set('author_id', $user->id)->createOne();
-        $response = $this->actingAs($user)->getJson(route('articles.show', 99999));
+        $response = $this->actingAs($user)->deleteJson(route('articles.show', 99999));
         $response->assertStatus(404);
         $this->assertDatabaseMissing('articles', [
             'id' => 99999,

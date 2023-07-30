@@ -48,4 +48,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Tag::class, 'author_id');
     }
+
+    public function articles(): HasMany
+    {
+        return $this->hasMany(Article::class, 'author_id');
+    }
 }

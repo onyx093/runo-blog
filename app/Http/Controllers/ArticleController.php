@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
+use App\Models\Article;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
-use App\Models\Article;
-use App\Models\Tag;
-use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -21,7 +22,33 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::query()->with(['comments', 'author', 'tags'])->paginate(8);
+        $articles = Article::query()
+                    ->with(['comments', 'author', 'tags'])
+                    ->when(
+                        request()->input('author_id'),
+                        function(Builder $query, string $authorId) {
+                            $query->where('author_id', '=', $authorId);
+                        }
+                    )
+                    ->when(
+                        request()->input('tag_ids'),
+                        static::filterByRelationshipIds('tags', 'tags.id'),
+                    )
+                    ->when(
+                        request()->input('author_ids'),
+                        static::filterByRelationshipIds('author', 'users.id'),
+                    )
+                    ->when(
+                        $orderingColumns = request()->input('order_by'),
+                        fn (Builder $query) => $query->orderBy(...$orderingColumns)
+                    )
+                    ->when(
+                        request('search'),
+                        fn (Builder $query, string $searchTerm) => $query
+                            ->where('title', 'ILIKE', "%$searchTerm%")
+                            ->orWhere('content', 'ILIKE', "%$searchTerm%"),
+                    )
+                    ->paginate(8);
         return $articles;
     }
 
@@ -87,5 +114,32 @@ class ArticleController extends Controller
         $article->delete();
 
         return response()->noContent();
+    }
+
+    private static function filterByRelationshipIds(string $relationship, string $idColumn)
+    {
+        return function (Builder $articleQuery, $ids) use ($relationship, $idColumn) {
+            if (!is_array($ids)) {
+                // support queries both like foo[]=1&foo[]=2 and foo=[1,2]
+                $parsedIds = json_decode($ids);
+
+                if (is_null($parsedIds)) {
+                    // also try to support foo=1,2
+                    $ids = explode(',', $ids);
+                } else {
+                    $ids = $parsedIds;
+                }
+            }
+
+            $articleQuery
+                ->whereHas(
+                    $relationship,
+                    fn (Builder $relationshipQuery) => $relationshipQuery
+                        ->whereIn(
+                            $idColumn,
+                            $ids
+                        )
+                );
+        };
     }
 }

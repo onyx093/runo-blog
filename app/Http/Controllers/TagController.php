@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTagRequest;
-use App\Http\Requests\UpdateTagRequest;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreTagRequest;
+use App\Http\Requests\UpdateTagRequest;
+use Illuminate\Database\Eloquent\Builder;
 
 class TagController extends Controller
 {
@@ -20,7 +21,15 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::with(['articles'])->paginate(8);
+        $tags = Tag::query()
+                ->with(['articles'])
+                ->when(
+                    request('author_id'),
+                    function(Builder $query, string $authorId) {
+                        $query->where('author_id', '=', $authorId);
+                    }
+                )
+                ->paginate(8);
         return $tags;
     }
 
