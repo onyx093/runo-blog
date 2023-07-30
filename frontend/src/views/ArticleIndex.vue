@@ -23,7 +23,7 @@ const articles = ref([]);
 
 onMounted( () => {
   Article.index().then( response => {
-      articles.value = response.data;
+      articles.value = response.data.data;
   });
 
 });

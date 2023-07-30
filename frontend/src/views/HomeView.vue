@@ -13,11 +13,11 @@ const editorsPickArticles = ref([]);
 
 onMounted( () => {
   Article.index().then( response => {
-      articles.value = response.data;
+      articles.value = response.data.data;
   });
 
   Article.index().then(editorsPickResponse => {
-      editorsPickArticles.value = editorsPickResponse.data.slice(0, 3);
+      editorsPickArticles.value = editorsPickResponse.data.data.slice(0, 3);
   });
 
 });
