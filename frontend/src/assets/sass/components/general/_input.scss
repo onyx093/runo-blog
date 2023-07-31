@@ -17,9 +17,13 @@
   padding: 10px;
 }
 
-.input__error {
+.input__errorText {
   color: red;
   font-family: $loraFont;
   font-size: 12px;
   font-style: normal;
+}
+
+.input--error {
+  border-color: red;
 }

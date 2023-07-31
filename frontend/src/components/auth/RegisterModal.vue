@@ -10,6 +10,7 @@
         type="text"
         :error="errors.name ? errors.name[0] : null"
         :required="true"
+        @update:value="errors.name = null"
       />
       <Input
         v-model:value="form.email"
@@ -18,6 +19,7 @@
         type="email"
         :error="errors.email ? errors.email[0] : null"
         :required="true"
+        @update:value="errors.email = null"
       />
       <Input
         v-model:value="form.password"
@@ -26,6 +28,7 @@
         type="password"
         :error="errors.password ? errors.password[0] : null"
         :required="true"
+        @update:value="errors.password = null"
       />
       <Button type="submit" :loading="isProcessing">Register</Button>
     </form>

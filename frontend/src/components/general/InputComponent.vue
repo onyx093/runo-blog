@@ -5,10 +5,11 @@
       :type="type"
       :name="forKey"
       class="input"
+      :class="{ 'input--error': error }"
       :required="required"
       @input="(event) => emits('update:value', event.target.value)"
     />
-    <span class="input__error">{{ error }}</span>
+    <span class="input__errorText">{{ error }}</span>
   </div>
 </template>
 
