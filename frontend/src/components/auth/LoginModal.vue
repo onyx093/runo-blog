@@ -1,11 +1,11 @@
 <template>
-    <Modal @close="emits('update:loginModalOpened', false)" >
-        <h2 class="modal__title">Login</h2>
+  <Modal @close="emits('update:loginModalOpened', false)">
+    <h2 class="modal__title">Login</h2>
 
-        <Input inputKey="email" label="Email" type="email" />
-        <Input inputKey="password" label="Password" type="password" />
-        <Button type="submit">Login</Button>
-    </Modal>
+    <Input for-key="email" label="Email" type="email" />
+    <Input for-key="password" label="Password" type="password" />
+    <Button type="submit">Login</Button>
+  </Modal>
 </template>
 
 <script setup>
@@ -15,9 +15,8 @@ import Input from '@/components/general/InputComponent.vue';
 import Button from '@/components/general/ButtonComponent.vue';
 
 defineProps({
-    loginModalOpened: Boolean,
+  loginModalOpened: Boolean,
 });
 
 const emits = defineEmits(['update:loginModalOpened']);
-
 </script>

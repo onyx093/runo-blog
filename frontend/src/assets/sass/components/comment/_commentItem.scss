@@ -1,41 +1,41 @@
 .commentItem {
-    border-radius: 20px;
-    background-color: #e7e7e7;
-    padding: 20px;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-    display: flex;
+  border-radius: 20px;
+  background-color: #e7e7e7;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  display: flex;
 }
 
 .commentItem__imageWrapper {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 .commentItem__image {
-    border-radius: 50%;
+  border-radius: 50%;
 }
 
 .commentItem__contentHeading {
-    margin-top: 0;
-    color: #343a40;
-    font-family: $loraFont;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.5;
+  margin-top: 0;
+  color: #343a40;
+  font-family: $loraFont;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .commentItem__contentDate {
-    color: #858585;
-    font-family: $loraFont;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
+  color: #858585;
+  font-family: $loraFont;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .commentItem__contentText {
-    color: #495057;
-    font-family: $loraFont;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1.3;
+  color: #495057;
+  font-family: $loraFont;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
 }

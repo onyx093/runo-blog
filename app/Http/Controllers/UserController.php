@@ -36,7 +36,7 @@ class UserController extends Controller
 
         $user = User::query()->firstWhere('email', $request->safe()['email']);
         if (!is_null($user)) {
-            throw ValidationException::withMessages(['User with email already exists']);
+            throw ValidationException::withMessages(['email' => 'User with email already exists']);
         }
 
         $user = new User($request->validated());

@@ -1,18 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&family=Lora:wght@400;700&family=Roboto:wght@400;700&display=swap');
 
 html {
-    background-color: #3e3e3e;
-    font-size: 14px;
+  background-color: #3e3e3e;
+  font-size: 14px;
 
-    @include for-phone-only {
-        font-size: 10px;
-    }
+  @include for-phone-only {
+    font-size: 10px;
+  }
 
-    @include for-large-screen-only {
-        font-size: 16px;
-    }
+  @include for-large-screen-only {
+    font-size: 16px;
+  }
 }
 
 body {
-    margin: 0;
+  margin: 0;
 }
