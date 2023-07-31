@@ -88,8 +88,13 @@ class UserController extends Controller
     public function login(CheckUserRequest $request)
     {
         $user = User::query()->firstWhere('email', $request->safe()['email']);
+
+        if (is_null($user)) {
+            throw ValidationException::withMessages(['email' => 'The provided credentials are incorrect']);
+        }
+
         if (!Hash::check($request->safe()['password'], $user->password)) {
-            throw new AuthenticationException();
+            throw ValidationException::withMessages(['email' => 'The provided credentials are incorrect']);
         }
 
         $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;

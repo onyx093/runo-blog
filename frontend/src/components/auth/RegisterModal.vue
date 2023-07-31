@@ -49,14 +49,13 @@ defineProps({
 
 const emits = defineEmits(['update:registerModalOpened']);
 
+const errors = ref({});
+const isProcessing = ref(false);
 const form = ref({
   name: '',
   email: '',
   password: '',
 });
-
-const errors = ref({});
-const isProcessing = ref(false);
 
 const registerUser = async () => {
   isProcessing.value = true;
