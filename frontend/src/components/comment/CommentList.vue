@@ -4,17 +4,31 @@
       <h3 class="commentList__heading">Comments:</h3>
 
       <div class="commentList__formWrapper">
-        <form class="commentList__form" @submit.prevent="submitComment">
-          <textarea
-            v-model="commentText"
+        <Form
+          v-model:errors="errors"
+          v-model:is-processing="isProcessing"
+          :handleLogic="submitComment"
+          class="commentList__form"
+        >
+          <Input
+            v-model:value="commentText"
             class="commentList__input"
-            cols="30"
-            rows="10"
-          ></textarea>
+            for-key="content"
+            label="Comment"
+            type="textarea"
+            :error="errors.content ? errors.content[0] : null"
+            :required="false"
+            @update:value="errors.content = null"
+          />
           <div class="commentList__buttonWrapper">
-            <button type="submit" class="commentList__button">Submit</button>
+            <Button
+              type="submit"
+              class="commentList__button"
+              :loading="isProcessing"
+              >Submit</Button
+            >
           </div>
-        </form>
+        </Form>
         <p v-if="error" class="commentList__formError">{{ error }}</p>
       </div>
 
@@ -37,6 +51,9 @@ import CommentItem from '@/components/comment/CommentItem.vue';
 import { defineProps, ref } from 'vue';
 import * as CommentRequest from '@/requests/Comment';
 import { useRoute } from 'vue-router';
+import Form from '@/components/general/FormComponent.vue';
+import Button from '@/components/general/ButtonComponent.vue';
+import Input from '@/components/general/InputComponent.vue';
 
 const route = useRoute();
 
@@ -48,20 +65,16 @@ const props = defineProps({
 });
 
 const commentText = ref('');
-const error = ref('');
+const errors = ref({});
+const isProcessing = ref(false);
 
 const submitComment = async () => {
-  error.value = '';
-  try {
-    const response = await CommentRequest.default.store({
-      content: commentText.value,
-      article_id: route.params.id,
-    });
+  const response = await CommentRequest.default.store({
+    content: commentText.value,
+    article_id: route.params.id,
+  });
 
-    props.comments.unshift(response.data);
-    commentText.value = '';
-  } catch (errorResponse) {
-    error.value = errorResponse.response.data.message;
-  }
+  props.comments.unshift(response.data);
+  commentText.value = '';
 };
 </script>

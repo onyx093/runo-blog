@@ -1,7 +1,16 @@
 <template>
   <div class="input__group">
     <label :for="forKey" class="input__label">{{ label }}</label>
+    <textarea
+      v-if="type === 'textarea'"
+      :name="forKey"
+      v-bind="$attrs"
+      :class="{ 'input--error': error }"
+      :required="required"
+      @input="(event) => emits('update:value', event.target.value)"
+    ></textarea>
     <input
+      v-else
       :type="type"
       :name="forKey"
       class="input"
@@ -12,6 +21,12 @@
     <span class="input__errorText">{{ error }}</span>
   </div>
 </template>
+
+<script>
+export default {
+  inheritAttrs: false,
+};
+</script>
 
 <script setup>
 import { defineEmits, defineProps } from 'vue';
