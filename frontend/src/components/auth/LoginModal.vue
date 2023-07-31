@@ -1,6 +1,10 @@
 <template>
   <Modal @close="emits('update:loginModalOpened', false)">
-    <form @submit.prevent="loginUser">
+    <Form
+      v-model:errors="errors"
+      v-model:is-processing="isProcessing"
+      :handleLogic="loginUser"
+    >
       <h2 class="modal__title">Login</h2>
 
       <Input
@@ -22,7 +26,7 @@
         @update:value="errors.password = null"
       />
       <Button type="submit" :loading="isProcessing">Login</Button>
-    </form>
+    </Form>
   </Modal>
 </template>
 
@@ -33,6 +37,7 @@ import Input from '@/components/general/InputComponent.vue';
 import Button from '@/components/general/ButtonComponent.vue';
 import User from '@/requests/User.js';
 import { toast } from 'vue3-toastify';
+import Form from '@/components/general/FormComponent.vue';
 
 defineProps({
   loginModalOpened: Boolean,
@@ -48,17 +53,9 @@ const form = ref({
 });
 
 const loginUser = async () => {
-  isProcessing.value = true;
-  errors.value = {};
-  try {
-    const response = await User.login(form.value);
-    localStorage.setItem('token', response.data.token);
-    emits('update:loginModalOpened', false);
-    toast('Successfully logged in!');
-  } catch (errorResponse) {
-    errors.value = errorResponse.response.data.errors;
-  } finally {
-    isProcessing.value = false;
-  }
+  const response = await User.login(form.value);
+  localStorage.setItem('token', response.data.token);
+  emits('update:loginModalOpened', false);
+  toast('Successfully logged in!');
 };
 </script>

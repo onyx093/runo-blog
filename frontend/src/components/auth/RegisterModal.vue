@@ -1,6 +1,10 @@
 <template>
   <Modal @close="emits('update:registerModalOpened', false)">
-    <form @submit.prevent="registerUser">
+    <Form
+      v-model:errors="errors"
+      v-model:is-processing="isProcessing"
+      :handleLogic="registerUser"
+    >
       <h2 class="modal__title">Register</h2>
 
       <Input
@@ -31,7 +35,7 @@
         @update:value="errors.password = null"
       />
       <Button type="submit" :loading="isProcessing">Register</Button>
-    </form>
+    </Form>
   </Modal>
 </template>
 
@@ -42,6 +46,7 @@ import Input from '@/components/general/InputComponent.vue';
 import Button from '@/components/general/ButtonComponent.vue';
 import User from '@/requests/User.js';
 import { toast } from 'vue3-toastify';
+import Form from '@/components/general/FormComponent.vue';
 
 defineProps({
   registerModalOpened: Boolean,
@@ -58,17 +63,9 @@ const form = ref({
 });
 
 const registerUser = async () => {
-  isProcessing.value = true;
-  errors.value = {};
-  try {
-    const response = await User.register(form.value);
-    localStorage.setItem('token', response.data.token);
-    emits('update:registerModalOpened', false);
-    toast('Successfully registered!');
-  } catch (errorResponse) {
-    errors.value = errorResponse.response.data.errors;
-  } finally {
-    isProcessing.value = false;
-  }
+  const response = await User.register(form.value);
+  localStorage.setItem('token', response.data.token);
+  emits('update:registerModalOpened', false);
+  toast('Successfully registered!');
 };
 </script>

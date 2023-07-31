@@ -15,7 +15,7 @@
             <button type="submit" class="commentList__button">Submit</button>
           </div>
         </form>
-        <p v-if="error">{{ error }}</p>
+        <p v-if="error" class="commentList__formError">{{ error }}</p>
       </div>
 
       <div v-if="comments.length" class="commentList__items">
@@ -51,6 +51,7 @@ const commentText = ref('');
 const error = ref('');
 
 const submitComment = async () => {
+  error.value = '';
   try {
     const response = await CommentRequest.default.store({
       content: commentText.value,
