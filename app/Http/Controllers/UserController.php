@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CheckUserRequest;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\CheckUserRequest;
+use App\Http\Requests\StoreUserRequest;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -39,7 +40,12 @@ class UserController extends Controller
             throw ValidationException::withMessages(['email' => 'User with email already exists']);
         }
 
-        $user = new User($request->validated());
+        $user = new User($request->safe()->only(['name', 'email', 'password']));
+        if($request->has('avatar')) {
+            $avatar_photo = $request->file('avatar');
+            $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
+            $user->avatar_url = Storage::url($avatar_photo_path);
+        }
         $user->save();
 
         $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
@@ -59,7 +65,14 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update($request->validated());
+        $user->name = $request->input('name');
+
+        if($request->has('avatar')) {
+            $avatar_photo = $request->file('avatar');
+            $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
+            $user->avatar_url = Storage::url($avatar_photo_path);
+        }
+        $user->save();
 
         return $user;
     }

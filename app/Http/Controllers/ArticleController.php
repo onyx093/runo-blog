@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -71,6 +73,14 @@ class ArticleController extends Controller
                 $article->tags()->attach($tag);
             }
         }
+        if($request->has('cover_photo')) {
+            $cover_photo = $request->file('cover_photo');
+            $cover_photo_path = Storage::disk('public')->put('covers', $cover_photo);
+            // $cover_photo_path = $cover_photo->storePublicly('covers', ['disk' => 'public']);
+            // $cover_photo_path = $cover_photo->storePublicly('public/covers');
+            $article->cover_url = Storage::url($cover_photo_path);
+            $article->save();
+        }
 
         return response($article, 201);
     }
@@ -90,17 +100,29 @@ class ArticleController extends Controller
     public function update(UpdateArticleRequest $request, Article $article)
     {
         $article->update($request->safe()->only(['title', 'content']));
+        $article->title = $request->input('title');
+        $article->content = $request->input('content');
+
+        if($request->has('cover_photo')) {
+            $cover_photo = $request->file('cover_photo');
+            $cover_photo_path = Storage::disk('public')->put('covers', $cover_photo);
+            $article->cover_url = Storage::url($cover_photo_path);
+        }
+        $article->save();
+
         if($request->has('tags'))
         {
-            $article->tags()->detach();
-            foreach ($request->input('tags') as $requestTag) {
-                $tag = Tag::firstOrCreate([
-                    'name' => $requestTag,
-                ], [
-                    'author_id' => $article->author_id,
-                ]);
-                $article->tags()->attach($tag);
-            }
+            DB::transaction(function() use ($article, $request) {
+                $article->tags()->detach();
+                foreach ($request->input('tags') as $requestTag) {
+                    $tag = Tag::firstOrCreate([
+                        'name' => $requestTag,
+                    ], [
+                        'author_id' => $article->author_id,
+                    ]);
+                    $article->tags()->attach($tag);
+                }
+            });
         }
         return $article;
     }
@@ -110,8 +132,10 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        $article->tags()->detach();
-        $article->delete();
+        DB::transaction(function() use ($article) {
+            $article->tags()->detach();
+            $article->delete();
+        });
 
         return response()->noContent();
     }

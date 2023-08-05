@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Tag;
 use Tests\TestCase;
 use App\Models\User;
 
@@ -36,6 +37,8 @@ class StoreTagTest extends TestCase
                 'author_id' => $author->id,
             ]
         );
+        $tags = Tag::all();
+        $this->assertCount(1, $tags);
     }
 
     /**

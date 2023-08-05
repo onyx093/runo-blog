@@ -25,6 +25,7 @@ class StoreArticleRequest extends FormRequest
             'title' => ['required', 'string'],
             'content' => ['required', 'string'],
             'tags' => ['sometimes', 'array'],
+            'cover_photo' => ['sometimes', 'file|max:4096', 'image'],
         ];
     }
 }

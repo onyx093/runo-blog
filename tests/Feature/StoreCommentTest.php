@@ -43,6 +43,8 @@ class StoreCommentTest extends TestCase
                 'author_id' => $author->id,
             ]
         );
+        $comments = Comment::all();
+        $this->assertCount(1, $comments);
     }
 
     /**

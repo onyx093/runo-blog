@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class TagController extends Controller
 {
@@ -68,8 +69,11 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        $tag->articles()->detach();
-        $tag->delete();
+        DB::transaction(function() use ($tag) {
+            $tag->articles()->detach();
+            $tag->delete();
+        });
+
         return response()->noContent();
     }
 }

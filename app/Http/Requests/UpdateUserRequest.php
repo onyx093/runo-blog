@@ -23,6 +23,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
+            'avatar' => ['sometimes', 'file|max:4096', 'image'],
         ];
     }
 }

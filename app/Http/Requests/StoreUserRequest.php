@@ -26,6 +26,7 @@ class StoreUserRequest extends FormRequest
             'name' => ['required', 'string'],
             'email' => ['required', 'email'],
             'password' => ['required', Password::min(8)->letters()],
+            'avatar' => ['sometimes', 'file|max:4096', 'image'],
         ];
     }
 }

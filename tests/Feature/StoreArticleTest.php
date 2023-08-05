@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Article;
 use App\Models\Tag;
 use Tests\TestCase;
 use App\Models\User;
@@ -49,6 +50,8 @@ class StoreArticleTest extends TestCase
                     "title" => $title,
                 ]);
             }) */;
+        $articles = Article::all();
+        $this->assertCount(1, $articles);
     }
 
     /**
