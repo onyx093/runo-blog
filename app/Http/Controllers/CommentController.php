@@ -7,13 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use Illuminate\Http\Response;
 
 class CommentController extends Controller
 {
 
     public function __construct()
     {
-        $this->authorizeResource(Comment::class);
+        $this->authorizeResource(Comment::class, options: ['except' => ['index', 'show']]);
     }
 
     /**
@@ -59,7 +60,7 @@ class CommentController extends Controller
         $comment->author_id = Auth::id() ?? null;
         $comment->save();
 
-        return response($comment, 201);
+        return response($comment, Response::HTTP_CREATED);
     }
 
     /**

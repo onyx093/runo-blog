@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\CheckUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateUserRequest;
-use Illuminate\Validation\Rules\Password;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -57,7 +54,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $user;
+        return $user->load('articles', 'comments');
     }
 
     /**
@@ -70,6 +67,11 @@ class UserController extends Controller
         if($request->has('avatar')) {
             $avatar_photo = $request->file('avatar');
             $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
+            if(!is_null($user->avatar_url))
+            {
+                $old_avatar_photo_path = 'avatars/' . basename($user->avatar_url);
+                Storage::disk('public')->delete($old_avatar_photo_path);
+            }
             $user->avatar_url = Storage::url($avatar_photo_path);
         }
         $user->save();

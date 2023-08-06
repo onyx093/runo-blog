@@ -55,10 +55,15 @@ class User extends Authenticatable
         return $this->hasMany(Article::class, 'author_id');
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'author_id');
+    }
+
     public function avatarUrl(): Attribute{
         return Attribute::make(
             get: fn(?string $avatarUrl) => $avatarUrl ? asset($avatarUrl) : null,
-            set: fn(string $avatarUrl) => null,
+            set: fn(string $avatarUrl) => $avatarUrl ? asset($avatarUrl) : null,
         );
     }
 }

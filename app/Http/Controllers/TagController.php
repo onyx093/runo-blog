@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class TagController extends Controller
@@ -14,7 +15,7 @@ class TagController extends Controller
 
     public function __construct()
     {
-        $this->authorizeResource(Tag::class);
+        $this->authorizeResource(Tag::class, options: ['except' => ['index', 'show']]);
     }
 
     /**
@@ -43,7 +44,7 @@ class TagController extends Controller
         $tag->author_id = Auth::id();
         $tag->save();
 
-        return response($tag, 201);
+        return response($tag, Response::HTTP_CREATED);
     }
 
     /**

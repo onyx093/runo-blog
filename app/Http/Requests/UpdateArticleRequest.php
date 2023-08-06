@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rules\File;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateArticleRequest extends FormRequest
@@ -25,7 +26,7 @@ class UpdateArticleRequest extends FormRequest
             'title' => ['required', 'string'],
             'content' => ['required', 'string'],
             'tags' => ['sometimes', 'array'],
-            'cover_photo' => ['sometimes', 'file|max:4096', 'image'],
+            'cover_photo' => ['sometimes', File::image()],
         ];
     }
 }

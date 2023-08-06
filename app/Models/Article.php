@@ -38,7 +38,7 @@ class Article extends Model
     public function coverUrl(): Attribute{
         return Attribute::make(
             get: fn(?string $coverUrl) => $coverUrl ? asset($coverUrl) : null,
-            set: fn(string $coverUrl) => null,
+            set: fn(string $coverUrl) => $coverUrl ? asset($coverUrl) : null,
         );
     }
 }

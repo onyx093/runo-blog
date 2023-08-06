@@ -4,19 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use App\Models\Article;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use App\Notifications\NotificationChannelProvider;
+use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
 
+    private array $notificationChannels;
+
     public function __construct()
     {
-        $this->authorizeResource(Article::class);
+        $this->authorizeResource(Article::class, options: ['except' => ['index', 'show']]);
+        $this->notificationChannels = (new NotificationChannelProvider)->getChannels();
     }
 
     /**
@@ -61,7 +66,16 @@ class ArticleController extends Controller
     {
         $article = new Article($request->safe()->only(['title', 'content']));
         $article->author_id = Auth::id();
+
+        if($request->hasFile('cover_photo')) {
+            $cover_photo = $request->file('cover_photo');
+            $cover_photo_path = Storage::disk('public')->put('covers', $cover_photo);
+            // $cover_photo_path = $cover_photo->storePublicly('covers', ['disk' => 'public']);
+            // $cover_photo_path = $cover_photo->storePublicly('public/covers');
+            $article->cover_url = Storage::url($cover_photo_path);
+        }
         $article->save();
+
         if($request->has('tags'))
         {
             foreach ($request->input('tags') as $requestTag) {
@@ -73,16 +87,13 @@ class ArticleController extends Controller
                 $article->tags()->attach($tag);
             }
         }
-        if($request->has('cover_photo')) {
-            $cover_photo = $request->file('cover_photo');
-            $cover_photo_path = Storage::disk('public')->put('covers', $cover_photo);
-            // $cover_photo_path = $cover_photo->storePublicly('covers', ['disk' => 'public']);
-            // $cover_photo_path = $cover_photo->storePublicly('public/covers');
-            $article->cover_url = Storage::url($cover_photo_path);
-            $article->save();
+
+        foreach($this->notificationChannels as $channel)
+        {
+            $channel->notifyAbout($article);
         }
 
-        return response($article, 201);
+        return response($article, Response::HTTP_CREATED);
     }
 
     /**
@@ -103,9 +114,14 @@ class ArticleController extends Controller
         $article->title = $request->input('title');
         $article->content = $request->input('content');
 
-        if($request->has('cover_photo')) {
+        if($request->hasFile('cover_photo')) {
             $cover_photo = $request->file('cover_photo');
             $cover_photo_path = Storage::disk('public')->put('covers', $cover_photo);
+            if(!is_null($article->cover_url))
+            {
+                $old_cover_photo_path = 'covers/' . basename($article->cover_url);
+                Storage::disk('public')->delete($old_cover_photo_path);
+            }
             $article->cover_url = Storage::url($cover_photo_path);
         }
         $article->save();
