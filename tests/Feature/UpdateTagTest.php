@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class UpdateTagTest extends TestCase
@@ -40,7 +41,7 @@ class UpdateTagTest extends TestCase
         $yourUser = User::factory()->createOne();
         $tag = Tag::factory()->set('author_id', $yourUser->id)->createOne();
         $response = $this->actingAs($myUser)->putJson(route('tags.update', $tag->id));
-        $response->assertStatus(403)->assertJsonStructure([
+        $response->assertStatus(Response::HTTP_FORBIDDEN)->assertJsonStructure([
             'message',
         ]);
     }
@@ -55,7 +56,7 @@ class UpdateTagTest extends TestCase
         $author = User::factory()->createOne();
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $response = $this->actingAs($author)->putJson(route('tags.update', 99999));
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
         $this->assertDatabaseMissing('tags', [
             'id' => 99999,
         ]);

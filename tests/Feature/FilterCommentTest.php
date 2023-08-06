@@ -3,6 +3,7 @@
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\User;
+use Illuminate\Http\Response;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 /**
@@ -29,7 +30,7 @@ test('can filter comments according to article_id', function () {
     );
 
     // then
-    $response->assertStatus(200);
+    $response->assertStatus(Response::HTTP_OK);
     $response->assertJson(function (AssertableJson $json) {
         $json
             ->count('data', 2)
@@ -65,7 +66,7 @@ test('can filter comments by author', function () {
     );
 
     // then
-    $response->assertStatus(200);
+    $response->assertStatus(Response::HTTP_OK);
     $response->assertJson(function (AssertableJson $json) {
         $json
             ->count('data', 2)
@@ -97,7 +98,7 @@ test('can filter comments according to a search string', function () {
     );
 
     // then
-    $response->assertStatus(200);
+    $response->assertStatus(Response::HTTP_OK);
     $response->assertJson(function (AssertableJson $json) {
         $json
             ->count('data', 3)
@@ -126,7 +127,7 @@ test('nested article comments route returns correct data', function () {
     );
 
     // then
-    $response->assertStatus(200);
+    $response->assertStatus(Response::HTTP_OK);
     $response->assertJson(
         fn (AssertableJson $json) =>
         $json

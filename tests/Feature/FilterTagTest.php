@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\Tag;
+use Illuminate\Http\Response;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 /**
@@ -28,7 +29,7 @@ test('can filter tags according to author_id', function () {
     );
 
     // then
-    $response->assertStatus(200);
+    $response->assertStatus(Response::HTTP_OK);
     $response->assertJson(function (AssertableJson $json) {
         $json
             ->count('data', 2)

@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Login, register and logout
-Route::post('/authenticate', [UserController::class, 'login']);
-Route::post('/register', [UserController::class, 'register']);
+Route::post('/authenticate', [UserController::class, 'login'])->name('login');
+Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::get('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
 
 $guestRoutes = ['index', 'show'];

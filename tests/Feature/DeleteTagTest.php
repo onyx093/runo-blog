@@ -7,6 +7,7 @@ use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 
 class DeleteTagTest extends TestCase
 {
@@ -19,7 +20,7 @@ class DeleteTagTest extends TestCase
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $response = $this->actingAs($author)->deleteJson(route('tags.destroy', $tag->id));
 
-        $response->assertStatus(204);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('tags', [
             'id' => $tag->id,
@@ -39,7 +40,7 @@ class DeleteTagTest extends TestCase
         $yourUser = User::factory()->createOne();
         $tag = Tag::factory()->set('author_id', $yourUser->id)->createOne();
         $response = $this->actingAs($myUser)->deleteJson(route('tags.destroy', $tag->id));
-        $response->assertStatus(403)->assertJsonStructure([
+        $response->assertStatus(Response::HTTP_FORBIDDEN)->assertJsonStructure([
             'message',
         ]);
     }
@@ -54,7 +55,7 @@ class DeleteTagTest extends TestCase
         $author = User::factory()->createOne();
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $response = $this->actingAs($author)->deleteJson(route('tags.show', 99999));
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
         $this->assertDatabaseMissing('tags', [
             'id' => 99999,
         ]);

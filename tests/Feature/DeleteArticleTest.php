@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Article;
 use App\Models\User;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class DeleteArticleTest extends TestCase
@@ -17,7 +18,7 @@ class DeleteArticleTest extends TestCase
         $article = Article::factory()->set('author_id', $author->id)->createOne();
         $response = $this->actingAs($author)->deleteJson(route('articles.destroy', $article->id));
 
-        $response->assertStatus(204);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('articles', [
             'id' => $article->id,
@@ -37,7 +38,7 @@ class DeleteArticleTest extends TestCase
         $yourUser = User::factory()->createOne();
         $article = Article::factory()->set('author_id', $yourUser->id)->createOne();
         $response = $this->actingAs($myUser)->deleteJson(route('articles.destroy', $article->id));
-        $response->assertStatus(403)->assertJsonStructure([
+        $response->assertStatus(Response::HTTP_FORBIDDEN)->assertJsonStructure([
             'message',
         ]);
     }
@@ -52,7 +53,7 @@ class DeleteArticleTest extends TestCase
         $user = User::factory()->createOne();
         $article = Article::factory()->set('author_id', $user->id)->createOne();
         $response = $this->actingAs($user)->deleteJson(route('articles.show', 99999));
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
         $this->assertDatabaseMissing('articles', [
             'id' => 99999,
         ]);

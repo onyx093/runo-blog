@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Comment;
+use Illuminate\Http\Response;
 
 class UpdateCommentTest extends TestCase
 {
@@ -41,7 +42,7 @@ class UpdateCommentTest extends TestCase
         $yourUser = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $yourUser->id)->createOne();
         $response = $this->actingAs($myUser)->putJson(route('comments.update', $comment->id));
-        $response->assertStatus(403)->assertJsonStructure([
+        $response->assertStatus(Response::HTTP_FORBIDDEN)->assertJsonStructure([
             'message',
         ]);
     }
@@ -56,7 +57,7 @@ class UpdateCommentTest extends TestCase
         $author = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $author->id)->createOne();
         $response = $this->actingAs($author)->putJson(route('comments.update', 99999));
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
         $this->assertDatabaseMissing('comments', [
             'id' => 99999,
         ]);

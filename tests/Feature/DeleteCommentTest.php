@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Comment;
 use App\Models\User;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class DeleteCommentTest extends TestCase
@@ -17,7 +18,7 @@ class DeleteCommentTest extends TestCase
         $comment = Comment::factory()->set('author_id', $author->id)->createOne();
         $response = $this->actingAs($author)->deleteJson(route('comments.destroy', $comment->id));
 
-        $response->assertStatus(204);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('comments', [
             'id' => $comment->id,
@@ -38,7 +39,7 @@ class DeleteCommentTest extends TestCase
         $yourUser = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $yourUser->id)->createOne();
         $response = $this->actingAs($myUser)->deleteJson(route('comments.destroy', $comment->id));
-        $response->assertStatus(403)->assertJsonStructure([
+        $response->assertStatus(Response::HTTP_FORBIDDEN)->assertJsonStructure([
             'message',
         ]);
     }
@@ -53,7 +54,7 @@ class DeleteCommentTest extends TestCase
         $user = User::factory()->createOne();
         $comment = Comment::factory()->set('author_id', $user->id)->createOne();
         $response = $this->actingAs($user)->deleteJson(route('comments.show', 99999));
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
         $this->assertDatabaseMissing('comments', [
             'id' => 99999,
         ]);
