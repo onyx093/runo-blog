@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        $defaultUser = User::factory()->set('email', 'test@example.com')->set('password', 'password123')->createOne();
+        $defaultUser = User::factory()->set('email', 'test@example.com')->set('password', 'password123')->has(Article::factory(4))->createOne();
         $users = User::factory(7)->create()->each( function($user) {
 
             Tag::factory()->create([

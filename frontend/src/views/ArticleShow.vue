@@ -24,7 +24,10 @@
           <ArticleAuthor :author="article.author" />
         </footer>
 
-        <CommentList :comments="article.comments" />
+        <CommentList
+          :comments="article.comments"
+          @new-comment="newCommentAdded"
+        />
       </div>
     </section>
   </article>
@@ -46,4 +49,8 @@ onMounted(() => {
     article.value = response.data;
   });
 });
+
+const newCommentAdded = (comment) => {
+  article.value.comments.unshift(comment);
+};
 </script>

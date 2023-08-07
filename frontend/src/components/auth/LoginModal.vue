@@ -43,7 +43,7 @@ defineProps({
   loginModalOpened: Boolean,
 });
 
-const emits = defineEmits(['update:loginModalOpened']);
+const emits = defineEmits(['update:loginModalOpened', 'userGotToken']);
 
 const errors = ref({});
 const isProcessing = ref(false);
@@ -56,6 +56,7 @@ const loginUser = async () => {
   const response = await User.login(form.value);
   localStorage.setItem('token', response.data.token);
   emits('update:loginModalOpened', false);
+  emits('userGotToken');
   toast('Successfully logged in!');
 };
 </script>

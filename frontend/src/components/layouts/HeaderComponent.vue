@@ -19,7 +19,7 @@
               >Articles</router-link
             >
           </li>
-          <li class="header__nav-item">
+          <li v-if="user === null" class="header__nav-item">
             <a
               class="header__navItemLink"
               href="#"
@@ -27,12 +27,27 @@
               >Sign in</a
             >
           </li>
-          <li class="header__nav-item">
+          <li v-if="user === null" class="header__nav-item">
             <a
               class="header__navItemLink"
               href="#"
               @click.prevent="emits('update:registerModalOpened', true)"
               >Register</a
+            >
+          </li>
+          <li v-if="user" class="header__nav-item">
+            <router-link
+              class="header__navItemLink"
+              :to="{ name: 'profile.index' }"
+              >My profile</router-link
+            >
+          </li>
+          <li v-if="user" class="header__nav-item">
+            <a
+              class="header__navItemLink"
+              href="#"
+              @click.prevent="emits('logoutUser')"
+              >Logout</a
             >
           </li>
         </ul>
@@ -47,10 +62,15 @@ import { defineProps, defineEmits } from 'vue';
 defineProps({
   loginModalOpened: Boolean,
   registerModalOpened: Boolean,
+  user: {
+    type: Object,
+    default: null,
+  },
 });
 
 const emits = defineEmits([
   'update:loginModalOpened',
   'update:registerModalOpened',
+  'logoutUser',
 ]);
 </script>

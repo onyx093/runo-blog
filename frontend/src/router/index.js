@@ -20,6 +20,16 @@ const router = createRouter({
       component: () => import('../views/ArticleShow.vue'),
     },
     {
+      path: '/my-profile',
+      name: 'profile.index',
+      component: () => import('../views/profile/IndexView.vue'),
+    },
+    {
+      path: '/my-profile/edit',
+      name: 'profile.edit',
+      component: () => import('../views/profile/EditView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
@@ -28,6 +38,12 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    return {
+      top: 0,
+      behavior: 'smooth',
+    };
+  },
 });
 
 export default router;

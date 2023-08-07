@@ -48,7 +48,7 @@
 
 <script setup>
 import CommentItem from '@/components/comment/CommentItem.vue';
-import { defineProps, ref } from 'vue';
+import { defineEmits, defineProps, ref } from 'vue';
 import * as CommentRequest from '@/requests/Comment';
 import { useRoute } from 'vue-router';
 import Form from '@/components/general/FormComponent.vue';
@@ -68,13 +68,15 @@ const commentText = ref('');
 const errors = ref({});
 const isProcessing = ref(false);
 
+const emits = defineEmits(['newComment']);
+
 const submitComment = async () => {
   const response = await CommentRequest.default.store({
     content: commentText.value,
     article_id: route.params.id,
   });
 
-  props.comments.unshift(response.data);
+  emits('newComment', response.data);
   commentText.value = '';
 };
 </script>

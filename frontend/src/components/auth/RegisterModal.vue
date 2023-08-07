@@ -52,7 +52,7 @@ defineProps({
   registerModalOpened: Boolean,
 });
 
-const emits = defineEmits(['update:registerModalOpened']);
+const emits = defineEmits(['update:registerModalOpened', 'userGotToken']);
 
 const errors = ref({});
 const isProcessing = ref(false);
@@ -66,6 +66,7 @@ const registerUser = async () => {
   const response = await User.register(form.value);
   localStorage.setItem('token', response.data.token);
   emits('update:registerModalOpened', false);
+  emits('userGotToken');
   toast('Successfully registered!');
 };
 </script>
