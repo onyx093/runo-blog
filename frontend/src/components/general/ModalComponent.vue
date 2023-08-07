@@ -1,7 +1,7 @@
 <template>
   <div class="modalWrapper">
     <div class="modal">
-      <div class="modal__close" @click="emits('close')">
+      <div class="modal__close" @click="closeModal()">
         <svg
           width="38"
           height="38"
@@ -28,7 +28,11 @@
 </template>
 
 <script setup>
-import { defineEmits } from 'vue';
+import { useModalStore } from '@/stores/modal.js';
 
-const emits = defineEmits(['close']);
+const modalStore = useModalStore();
+
+const closeModal = () => {
+  modalStore.closeModal();
+};
 </script>

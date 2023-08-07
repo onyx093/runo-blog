@@ -5,21 +5,26 @@
       v-if="type === 'textarea'"
       :name="forKey"
       v-bind="$attrs"
-      :class="{ 'input--error': error }"
+      :class="{ 'input--error': errorStore.getError(forKey) }"
       :required="required"
       @input="(event) => emits('update:value', event.target.value)"
+      @change="errorStore.deleteError(forKey)"
     ></textarea>
     <input
       v-else
       :type="type"
       :name="forKey"
       class="input"
-      :class="{ 'input--error': error }"
+      :class="{ 'input--error': errorStore.getError(forKey) }"
       :required="required"
       :value="value"
+      :readonly="readonly"
       @input="(event) => emits('update:value', event.target.value)"
+      @change="errorStore.deleteError(forKey)"
     />
-    <span class="input__errorText">{{ error }}</span>
+    <span v-if="errorStore.getError(forKey)" class="input__errorText">{{
+      errorStore.getError(forKey)
+    }}</span>
   </div>
 </template>
 
@@ -30,7 +35,9 @@ export default {
 </script>
 
 <script setup>
-import { defineEmits, defineProps } from 'vue';
+import { useErrorStore } from '@/stores/error.js';
+
+const errorStore = useErrorStore();
 
 const emits = defineEmits(['update:value']);
 
@@ -47,15 +54,15 @@ defineProps({
     type: String,
     required: true,
   },
-  error: {
-    type: String,
-    required: true,
-  },
   value: {
     type: String,
     required: true,
   },
   required: {
+    type: Boolean,
+    default: false,
+  },
+  readonly: {
     type: Boolean,
     default: false,
   },

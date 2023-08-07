@@ -19,34 +19,34 @@
               >Articles</router-link
             >
           </li>
-          <li v-if="user === null" class="header__nav-item">
+          <li v-if="userStore.isGuest" class="header__nav-item">
             <a
               class="header__navItemLink"
               href="#"
-              @click.prevent="emits('update:loginModalOpened', true)"
+              @click.prevent="modalStore.openModal('login')"
               >Sign in</a
             >
           </li>
-          <li v-if="user === null" class="header__nav-item">
+          <li v-if="userStore.isGuest" class="header__nav-item">
             <a
               class="header__navItemLink"
               href="#"
-              @click.prevent="emits('update:registerModalOpened', true)"
+              @click.prevent="modalStore.openModal('register')"
               >Register</a
             >
           </li>
-          <li v-if="user" class="header__nav-item">
+          <li v-if="userStore.isLoggedIn" class="header__nav-item">
             <router-link
               class="header__navItemLink"
               :to="{ name: 'profile.index' }"
               >My profile</router-link
             >
           </li>
-          <li v-if="user" class="header__nav-item">
+          <li v-if="userStore.isLoggedIn" class="header__nav-item">
             <a
               class="header__navItemLink"
               href="#"
-              @click.prevent="emits('logoutUser')"
+              @click.prevent="userStore.logoutUser()"
               >Logout</a
             >
           </li>
@@ -57,20 +57,9 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { useUserStore } from '@/stores/user.js';
+import { useModalStore } from '@/stores/modal.js';
 
-defineProps({
-  loginModalOpened: Boolean,
-  registerModalOpened: Boolean,
-  user: {
-    type: Object,
-    default: null,
-  },
-});
-
-const emits = defineEmits([
-  'update:loginModalOpened',
-  'update:registerModalOpened',
-  'logoutUser',
-]);
+const userStore = useUserStore();
+const modalStore = useModalStore();
 </script>

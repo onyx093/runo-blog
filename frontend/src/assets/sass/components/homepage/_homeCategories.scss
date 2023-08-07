@@ -20,6 +20,10 @@
   margin-bottom: 20px;
 }
 
+.section__heading--centered {
+  text-align: center;
+}
+
 .section__categories {
   @include unset;
   display: flex;

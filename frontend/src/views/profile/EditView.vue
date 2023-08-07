@@ -1,68 +1,71 @@
 <script setup>
-import { defineProps, ref } from 'vue';
+import { computed, ref } from 'vue';
 import ProfileBoard from '@/components/profile/ProfileBoard.vue';
 import Input from '@/components/general/InputComponent.vue';
 import Button from '@/components/general/ButtonComponent.vue';
 import Form from '@/components/general/FormComponent.vue';
 import User from '@/requests/User';
 import { toast } from 'vue3-toastify';
+import { useUserStore } from '@/stores/user';
 
-const props = defineProps({
-  user: {
-    type: Object,
-    required: true,
-  },
-});
+const userStore = useUserStore();
 
-const errors = ref({});
+const user = computed(() => userStore.user);
+
 const isProcessing = ref(false);
 const form = ref({
-  name: props.user.name,
-  email: props.user.email,
+  name: user.value.name,
+  email: user.value.email,
 });
 
 const editProfile = async () => {
-  await User.edit(props.user.id, form.value);
+  try {
+    const response = await User.edit(user.value.id, form.value);
+    userStore.setUser(response.data);
+  } catch (error) {
+    console.log(error);
+  }
   toast('User profile updated!');
 };
 </script>
 
 <template>
   <main>
-    <ProfileBoard :user="props.user" />
+    <ProfileBoard :user="user" />
 
-    <section class="section">
-      <div class="section__inner">
-        <h2 class="section__heading">Edit profile</h2>
+    <div class="editProfileForm">
+      <div class="editProfileForm__inner">
+        <section class="section">
+          <div class="section__inner">
+            <h2 class="section__heading section__heading--centered">
+              Edit profile
+            </h2>
 
-        <Form
-          v-model:errors="errors"
-          v-model:is-processing="isProcessing"
-          :handleLogic="editProfile"
-        >
-          <h2 class="modal__title">Register</h2>
-
-          <Input
-            v-model:value="form.name"
-            for-key="name"
-            label="Name"
-            type="text"
-            :error="errors.name ? errors.name[0] : null"
-            :required="true"
-            @update:value="errors.name = null"
-          />
-          <Input
-            v-model:value="form.email"
-            for-key="email"
-            label="Email"
-            type="email"
-            :error="errors.email ? errors.email[0] : null"
-            :required="true"
-            @update:value="errors.email = null"
-          />
-          <Button type="submit" :loading="isProcessing">Edit profile</Button>
-        </Form>
+            <Form
+              v-model:errors="errors"
+              v-model:is-processing="isProcessing"
+              :handleLogic="editProfile"
+            >
+              <Input
+                v-model:value="form.name"
+                for-key="name"
+                label="Name"
+                type="text"
+                :required="true"
+              />
+              <Input
+                v-model:value="form.email"
+                for-key="email"
+                label="Email"
+                type="email"
+                :required="true"
+                :readonly="true"
+              />
+              <Button type="submit" :loading="isProcessing">Update</Button>
+            </Form>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
   </main>
 </template>

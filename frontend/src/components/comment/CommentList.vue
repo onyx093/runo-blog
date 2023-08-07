@@ -1,3 +1,37 @@
+<script setup>
+import CommentItem from '@/components/comment/CommentItem.vue';
+import { defineEmits, defineProps, ref } from 'vue';
+import * as CommentRequest from '@/requests/Comment';
+import { useRoute } from 'vue-router';
+import Form from '@/components/general/FormComponent.vue';
+import Button from '@/components/general/ButtonComponent.vue';
+import Input from '@/components/general/InputComponent.vue';
+
+const route = useRoute();
+
+defineProps({
+  comments: {
+    type: Array,
+    required: true,
+  },
+});
+
+const commentText = ref('');
+const isProcessing = ref(false);
+
+const emits = defineEmits(['newComment']);
+
+const submitComment = async () => {
+  const response = await CommentRequest.default.store({
+    content: commentText.value,
+    article_id: route.params.id,
+  });
+
+  emits('newComment', response.data);
+  commentText.value = '';
+};
+</script>
+
 <template>
   <div class="commentList">
     <div class="commentList__inner">
@@ -5,7 +39,6 @@
 
       <div class="commentList__formWrapper">
         <Form
-          v-model:errors="errors"
           v-model:is-processing="isProcessing"
           :handleLogic="submitComment"
           class="commentList__form"
@@ -16,9 +49,7 @@
             for-key="content"
             label="Comment"
             type="textarea"
-            :error="errors.content ? errors.content[0] : null"
             :required="false"
-            @update:value="errors.content = null"
           />
           <div class="commentList__buttonWrapper">
             <Button
@@ -29,7 +60,7 @@
             >
           </div>
         </Form>
-        <p v-if="error" class="commentList__formError">{{ error }}</p>
+        <!-- <p v-if="error" class="commentList__formError">{{ error }}</p> -->
       </div>
 
       <div v-if="comments.length" class="commentList__items">
@@ -45,38 +76,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import CommentItem from '@/components/comment/CommentItem.vue';
-import { defineEmits, defineProps, ref } from 'vue';
-import * as CommentRequest from '@/requests/Comment';
-import { useRoute } from 'vue-router';
-import Form from '@/components/general/FormComponent.vue';
-import Button from '@/components/general/ButtonComponent.vue';
-import Input from '@/components/general/InputComponent.vue';
-
-const route = useRoute();
-
-const props = defineProps({
-  comments: {
-    type: Array,
-    required: true,
-  },
-});
-
-const commentText = ref('');
-const errors = ref({});
-const isProcessing = ref(false);
-
-const emits = defineEmits(['newComment']);
-
-const submitComment = async () => {
-  const response = await CommentRequest.default.store({
-    content: commentText.value,
-    article_id: route.params.id,
-  });
-
-  emits('newComment', response.data);
-  commentText.value = '';
-};
-</script>

@@ -1,21 +1,19 @@
 <script setup>
-import { defineProps, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import ProfileBoard from '@/components/profile/ProfileBoard.vue';
 import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
 import Article from '@/requests/Article.js';
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore();
+
+const user = computed(() => userStore.user);
 
 const myArticles = ref([]);
 
-const props = defineProps({
-  user: {
-    type: Object,
-    required: true,
-  },
-});
-
 onMounted(() => {
   Article.index({
-    author_ids: [props.user.id],
+    author_ids: [user.value.id],
   }).then((myArticlesResponse) => {
     myArticles.value = myArticlesResponse.data.data;
   });
@@ -23,7 +21,7 @@ onMounted(() => {
 </script>
 <template>
   <main>
-    <ProfileBoard :user="props.user" />
+    <ProfileBoard :user="user" />
 
     <section class="section">
       <div class="section__inner">
