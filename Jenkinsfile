@@ -29,6 +29,15 @@ def createTestingEnvironment() {
    ])
 }
 
+def checkBranchName(name) {
+    if(name.startsWith("build") || name.startsWith("ci")|| name.startsWith("docs")
+        || name.startsWith("feat") || name.startsWith("fix") || name.startsWith("perf")
+        || name.startsWith("refactor") || name.startsWith("style")|| name.startsWith("test")) {
+        return true
+    }
+    return false
+}
+
 pipeline {
     agent none
 
@@ -74,7 +83,7 @@ pipeline {
                 container('main') {
                     // For reference see: https://plugins.jenkins.io/gitlab-branch-source/#plugin-content-environment-variables
                     // (variables such as this will be useful for your homework).
-                    sh 'echo "Branch $BRANCH_NAME going into $CHANGE_TARGET implemented by $CHANGE_AUTHOR"'
+                    sh 'echo "Branch ${env.BRANCH_NAME} going into ${env.CHANGE_TARGET} implemented by ${env.CHANGE_AUTHOR}"'
 
                     sh '''
                         composer install
@@ -93,22 +102,38 @@ pipeline {
             }
             post {
                 success {
-                    updateGitlabCommitStatus name: 'conventional-commits', state: 'success'
+                    updateGitlabCommitStatus name: 'mr-commits', state: 'success'
                 }
                 failure {
-                    updateGitlabCommitStatus name: 'conventional-commits', state: 'failed'
+                    updateGitlabCommitStatus name: 'mr-commits', state: 'failed'
                 }
             }
             parallel {
                 stage('Check branch name') {
                     steps {
-                        echo "MR name"
+                        script {
+                            echo "MR branch name ${env.CHANGE_BRANCH}"
+                            def branch_name = env.CHANGE_BRANCH
+                            if (checkBranchName(branch_name)) {
+                                echo "Valid MR branch name"
+                            }else {
+                                error "This branch name does not start with one of a recommended branch name word"
+                            }
+                        }
 
                     }
                 }
                 stage('Check commit email address') {
                     steps {
-                        echo "email check"
+                        script {
+                            def emails = sh(script: "git log --pretty=format:%ae remotes/origin/${env.CHANGE_TARGET}..remotes/origin/${env.BRANCH_NAME}", returnStdout: true).trim().split('\n')
+                            for(email in emails) {
+                                if(!email.endsWith('@internetbrands.com')) {
+                                    error "Email error: authors' email address does not contain '@internetbrands.com'"
+                                }
+                            }
+                            echo "All commits contain '@internetbrands.com' suffix"
+                        }
                     }
                 }
             }
