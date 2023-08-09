@@ -83,7 +83,7 @@ pipeline {
                 container('main') {
                     // For reference see: https://plugins.jenkins.io/gitlab-branch-source/#plugin-content-environment-variables
                     // (variables such as this will be useful for your homework).
-                    sh 'echo "Branch ${env.BRANCH_NAME} going into ${env.CHANGE_TARGET} implemented by ${env.CHANGE_AUTHOR}"'
+                    sh 'echo "Branch $BRANCH_NAME going into $CHANGE_TARGET implemented by $CHANGE_AUTHOR"'
 
                     sh '''
                         composer install
