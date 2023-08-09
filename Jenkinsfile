@@ -110,6 +110,7 @@ pipeline {
             }
             parallel {
                 stage('Check branch name') {
+                    agent any
                     steps {
                         script {
                             echo "MR branch name ${env.CHANGE_BRANCH}"
@@ -124,6 +125,7 @@ pipeline {
                     }
                 }
                 stage('Check commit email address') {
+                    agent any
                     steps {
                         script {
                             def emails = sh(script: "git log --pretty=format:%ae remotes/origin/${env.CHANGE_TARGET}..remotes/origin/${env.BRANCH_NAME}", returnStdout: true).trim().split('\n')
