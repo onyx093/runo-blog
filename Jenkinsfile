@@ -5,8 +5,7 @@ def createTestingEnvironment() {
     return setupContainers([
         [
             'name': 'main',
-            // WARNING: rename this to follow $username-testing-image
-            'image': 'ike-docker-local.artifactory.internetbrands.com/corp/levelup-academy:main-repo-testing-image',
+            'image': 'ike-docker-local.artifactory.internetbrands.com/corp/levelup-academy:oobidiya-testing-image',
             'imagePullPolicy': 'Always',
             'env': [
                 ['name': 'DB_HOST',     'value': 'localhost'],
@@ -37,8 +36,6 @@ pipeline {
         gitLabConnection('IB Gitlab')
     }
 
-    // hello, something changed
-
     stages {
         stage('Build pipeline testing image') {
             agent {
@@ -53,7 +50,7 @@ pipeline {
                         'docker_repo_credential_id': 'artifactory-ike',
                         'dockerfile': './pipeline/Dockerfile',
                         'docker_image_name': 'levelup-academy',
-                        'docker_image_tag': 'main-repo-testing-image' // WARNING: rename this to follow $username-testing-image
+                        'docker_image_tag': 'oobidiya-testing-image'
                     ])
                 }
             }
@@ -86,6 +83,33 @@ pipeline {
                     sh '''
                         APP_ENV=testing php artisan test --env=testing
                     '''
+                }
+            }
+        }
+
+        stage('Check merge requests') {
+            when {
+                expression { env.CHANGE_TARGET != null }
+            }
+            post {
+                success {
+                    updateGitlabCommitStatus name: 'conventional-commits', state: 'success'
+                }
+                failure {
+                    updateGitlabCommitStatus name: 'conventional-commits', state: 'failed'
+                }
+            }
+            parallel {
+                stage('Check branch name') {
+                    steps {
+                        echo "MR name"
+
+                    }
+                }
+                stage('Check commit email address') {
+                    steps {
+                        echo "email check"
+                    }
                 }
             }
         }
