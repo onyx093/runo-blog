@@ -67,7 +67,7 @@ pipeline {
 
         stage('Check merge requests') {
             when {
-                expression { env.CHANGE_TARGET != null }
+                expression { return env.CHANGE_AUTHOR }
             }
             post {
                 success {
