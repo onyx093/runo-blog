@@ -89,9 +89,9 @@ pipeline {
                             echo "MR branch name ${env.CHANGE_BRANCH}"
                             def branch_name = env.CHANGE_BRANCH
                             if (checkBranchName(branch_name)) {
-                                echo "Valid MR branch name"
+                                echo "This is a valid MR branch name"
                             }else {
-                                error "This branch name does not start with one of a recommended branch name word"
+                                error "This branch name does not start with one of a recommended branch-name word"
                             }
                         }
 
