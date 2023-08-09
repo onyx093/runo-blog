@@ -65,37 +65,6 @@ pipeline {
             }
         }
 
-        stage('Run PHP tests') {
-            agent {
-                kubernetes {
-                    yaml createTestingEnvironment()
-                }
-            }
-            post {
-                success {
-                    updateGitlabCommitStatus name: 'php-tests', state: 'success'
-                }
-                failure {
-                    updateGitlabCommitStatus name: 'php-tests', state: 'failed'
-                }
-            }
-            steps {
-                container('main') {
-                    // For reference see: https://plugins.jenkins.io/gitlab-branch-source/#plugin-content-environment-variables
-                    // (variables such as this will be useful for your homework).
-                    sh 'echo "Branch $BRANCH_NAME going into $CHANGE_TARGET implemented by $CHANGE_AUTHOR"'
-
-                    sh '''
-                        composer install
-                    '''
-
-                    sh '''
-                        APP_ENV=testing php artisan test --env=testing
-                    '''
-                }
-            }
-        }
-
         stage('Check merge requests') {
             when {
                 expression { env.CHANGE_TARGET != null }
@@ -145,6 +114,37 @@ pipeline {
                             echo "All commits contain '@internetbrands.com' suffix"
                         }
                     }
+                }
+            }
+        }
+
+        stage('Run PHP tests') {
+            agent {
+                kubernetes {
+                    yaml createTestingEnvironment()
+                }
+            }
+            post {
+                success {
+                    updateGitlabCommitStatus name: 'php-tests', state: 'success'
+                }
+                failure {
+                    updateGitlabCommitStatus name: 'php-tests', state: 'failed'
+                }
+            }
+            steps {
+                container('main') {
+                    // For reference see: https://plugins.jenkins.io/gitlab-branch-source/#plugin-content-environment-variables
+                    // (variables such as this will be useful for your homework).
+                    sh 'echo "Branch $BRANCH_NAME going into $CHANGE_TARGET implemented by $CHANGE_AUTHOR"'
+
+                    sh '''
+                        composer install
+                    '''
+
+                    sh '''
+                        APP_ENV=testing php artisan test --env=testing
+                    '''
                 }
             }
         }
