@@ -8,9 +8,10 @@ use App\Interfaces\INotificationService;
 class ModeratorNotifier implements INotificationService
 {
 
-    public function notifyAbout(Article $article): void
+    public function notifyAbout(Article $article): bool
     {
-        echo "A new article, $article->title, has just been published, and it is available for review" . PHP_EOL;
+        // return "A new article, $article->title, has just been published, and it is available for review";
+        return true;
     }
 
 }

@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Interfaces\INotificationService;
 use App\Models\Article;
 use App\Models\Tag;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
 
 class StoreArticleTest extends TestCase
 {
@@ -107,6 +109,81 @@ class StoreArticleTest extends TestCase
             [
                 'message',
                 'errors',
+            ]
+        );
+    }
+
+    /**
+     * A basic feature test to check that twitter notifications were sent on article creation.
+     */
+    public function test_check_that_twitter_notifications_were_sent_on_article_creation(): void
+    {
+        $author = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
+        $tags = [$tag->name, 'colours', 'words'];
+        $title = 'foobar';
+        $content = 'An interesting foobar story';
+
+        /** @var MockInterface */
+        $twitterNotifier = Mockery::mock(INotificationService::class);
+        $twitterNotifier->shouldReceive('notifyAbout')->once()->andReturn(true);
+        $this->app->instance(INotificationService::class, [$twitterNotifier]);
+        $this->actingAs($author)->postJson(
+            route('articles.store'),
+            [
+                'title' => $title,
+                'content' => $content,
+                'tags' => $tags,
+            ]
+        );
+    }
+
+    /**
+     * A basic feature test to check that moderator notifications were sent on article creation.
+     */
+    public function test_check_that_moderator_notifications_were_sent_on_article_creation(): void
+    {
+        $author = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
+        $tags = [$tag->name, 'colours', 'words'];
+        $title = 'foobar';
+        $content = 'An interesting foobar story';
+
+        /** @var MockInterface */
+        $moderatorNotifier = Mockery::mock(INotificationService::class);
+        $moderatorNotifier->shouldReceive('notifyAbout')->once()->andReturn(true);
+        $this->app->instance(INotificationService::class, [$moderatorNotifier]);
+        $this->actingAs($author)->postJson(
+            route('articles.store'),
+            [
+                'title' => $title,
+                'content' => $content,
+                'tags' => $tags,
+            ]
+        );
+    }
+
+    /**
+     * A basic feature test to check that user notifications were sent on article creation.
+     */
+    public function test_check_that_user_notifications_were_sent_on_article_creation(): void
+    {
+        $author = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
+        $tags = [$tag->name, 'colours', 'words'];
+        $title = 'foobar';
+        $content = 'An interesting foobar story';
+
+        /** @var MockInterface */
+        $userNotifier = Mockery::mock(INotificationService::class);
+        $userNotifier->shouldReceive('notifyAbout')->once()->andReturn(true);
+        $this->app->instance(INotificationService::class, [$userNotifier]);
+        $this->actingAs($author)->postJson(
+            route('articles.store'),
+            [
+                'title' => $title,
+                'content' => $content,
+                'tags' => $tags,
             ]
         );
     }

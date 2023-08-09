@@ -6,5 +6,5 @@ use App\Models\Article;
 
 interface INotificationService
 {
-    public function notifyAbout(Article $article): void;
+    public function notifyAbout(Article $article): bool;
 }

@@ -4,5 +4,5 @@ namespace App\Interfaces;
 
 interface INotificationChannelProvider
 {
-    public function getChannels(): array;
+    public static function getChannels(): array;
 }

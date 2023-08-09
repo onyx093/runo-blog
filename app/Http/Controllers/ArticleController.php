@@ -10,18 +10,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
-use App\Notifications\NotificationChannelProvider;
+use App\Interfaces\INotificationService;
 use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
+    private $notifiers;
 
-    private array $notificationChannels;
-
-    public function __construct()
+    public function __construct(INotificationService ...$notificationServices)
     {
         $this->authorizeResource(Article::class, options: ['except' => ['index', 'show']]);
-        $this->notificationChannels = (new NotificationChannelProvider)->getChannels();
+        $this->notifiers = $notificationServices;
     }
 
     /**
@@ -88,9 +87,9 @@ class ArticleController extends Controller
             }
         }
 
-        foreach($this->notificationChannels as $channel)
+        foreach($this->notifiers as $notifier)
         {
-            $channel->notifyAbout($article);
+            $notifier->notifyAbout($article);
         }
 
         return response($article, Response::HTTP_CREATED);

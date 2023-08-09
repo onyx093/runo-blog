@@ -8,9 +8,10 @@ use App\Interfaces\INotificationService;
 class TwitterNotifier implements INotificationService
 {
 
-    public function notifyAbout(Article $article): void
+    public function notifyAbout(Article $article): bool
     {
-        echo "Check out this cool new article! $article->title" . PHP_EOL;
+        // return "Check out this cool new article! $article->title";
+        return true;
     }
 
 }

@@ -8,9 +8,10 @@ use App\Interfaces\INotificationService;
 class UserNotifier implements INotificationService
 {
 
-    public function notifyAbout(Article $article): void
+    public function notifyAbout(Article $article): bool
     {
-        echo "Check out this newly published article: " . $article->title . ", by " . $article->author->name . PHP_EOL;
+        // return "Check out this newly published article: " . $article->title . ", by " . $article->author->name;
+        return true;
     }
 
 }
