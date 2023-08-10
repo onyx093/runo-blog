@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import User from '@/requests/User.js';
+import handleError from '@/utils/handleError.js';
 
 export const useUserStore = defineStore('user', () => {
   const user = ref(undefined);
@@ -17,7 +18,8 @@ export const useUserStore = defineStore('user', () => {
       const response = await User.my();
       user.value = response.data;
     } catch (error) {
-      user.value = null;
+      handleError(error);
+      user.value = undefined;
     }
   }
 

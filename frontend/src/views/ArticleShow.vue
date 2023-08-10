@@ -39,15 +39,19 @@ import { useRoute } from 'vue-router';
 import ArticleCategory from '@/components/article/ArticleCategory.vue';
 import ArticleAuthor from '@/components/article/ArticleAuthor.vue';
 import CommentList from '@/components/comment/CommentList.vue';
-import Article from '../requests/Article';
+import Article from '@/requests/Article';
+import handleError from '@/utils/handleError.js';
 
 const route = useRoute();
 const article = ref(null);
 
-onMounted(() => {
-  Article.show(route.params.id).then((response) => {
+onMounted(async () => {
+  try {
+    const response = await Article.show(route.params.id);
     article.value = response.data;
-  });
+  } catch (error) {
+    handleError(error);
+  }
 });
 
 const newCommentAdded = (comment) => {

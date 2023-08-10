@@ -7,6 +7,7 @@
 <script setup>
 import { defineEmits, defineProps } from 'vue';
 import { useErrorStore } from '@/stores/error.js';
+import handleError from '@/utils/handleError.js';
 
 const errorStore = useErrorStore();
 
@@ -24,7 +25,7 @@ const submitForm = async () => {
   try {
     await props.handleLogic();
   } catch (errorResponse) {
-    errorStore.setErrors(errorResponse.response.data.errors);
+    handleError(errorResponse, errorStore);
   } finally {
     emits('update:isProcessing', false);
   }

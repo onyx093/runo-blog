@@ -8,14 +8,14 @@
         for-key="email"
         label="Email"
         type="email"
-        :required="true"
+        :required="false"
       />
       <Input
         v-model:value="form.password"
         for-key="password"
         label="Password"
         type="password"
-        :required="true"
+        :required="false"
       />
       <Button type="submit" :loading="isProcessing">Login</Button>
     </Form>

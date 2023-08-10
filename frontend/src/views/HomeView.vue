@@ -5,20 +5,27 @@ import ArticleMain from '@/components/article/ArticleMain.vue';
 import HomeCategories from '@/components/homepage/HomeCategories.vue';
 import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
 import Article from '@/requests/Article.js';
+import handleError from '@/utils/handleError.js';
 
 const articles = ref([]);
 
 const featuredArticle = computed(() => articles.value[0]);
 const editorsPickArticles = ref([]);
 
-onMounted(() => {
-  Article.index().then((response) => {
-    articles.value = response.data.data;
-  });
+onMounted( async () => {
+    try {
+        const response = await Article.index();
+        articles.value = response.data.data;
+    } catch (error) {
+        handleError(error);
+    }
 
-  Article.index().then((editorsPickResponse) => {
-    editorsPickArticles.value = editorsPickResponse.data.data.slice(0, 3);
-  });
+    try {
+        const responseEditorsPick = await Article.index();
+        editorsPickArticles.value = responseEditorsPick.data.data.slice(0, 3);
+    } catch (error) {
+        handleError(error);
+    }
 });
 </script>
 
