@@ -19,16 +19,18 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import ArticleCard from '@/components/article/ArticleCard.vue';
 import HomeCategories from '@/components/homepage/HomeCategories.vue';
 import Article from '@/requests/Article.js';
+import handleError from '@/utils/handleError.js';
 
 const articles = ref([]);
 
-onMounted(() => {
-  Article.index().then((response) => {
-    articles.value = response.data.data;
-  });
-});
+try {
+  const response = await Article.index();
+  articles.value = response.data.data;
+} catch (error) {
+  handleError(error);
+}
 </script>

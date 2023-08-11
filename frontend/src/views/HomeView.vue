@@ -1,32 +1,28 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import ArticleCard from '@/components/article/ArticleCard.vue';
 import ArticleMain from '@/components/article/ArticleMain.vue';
 import HomeCategories from '@/components/homepage/HomeCategories.vue';
 import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
 import Article from '@/requests/Article.js';
 import handleError from '@/utils/handleError.js';
+import axios from 'axios';
 
 const articles = ref([]);
 
 const featuredArticle = computed(() => articles.value[0]);
 const editorsPickArticles = ref([]);
 
-onMounted( async () => {
-    try {
-        const response = await Article.index();
-        articles.value = response.data.data;
-    } catch (error) {
-        handleError(error);
-    }
+const request1 = Article.index();
+const request2 = Article.index();
 
-    try {
-        const responseEditorsPick = await Article.index();
-        editorsPickArticles.value = responseEditorsPick.data.data.slice(0, 3);
-    } catch (error) {
-        handleError(error);
-    }
-});
+try {
+  const [response1, response2] = await axios.all([request1, request2]);
+  articles.value = response1.data.data;
+  editorsPickArticles.value = response2.data.data.slice(0, 3);
+} catch (error) {
+  handleError(error);
+}
 </script>
 
 <template>

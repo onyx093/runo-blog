@@ -1,9 +1,10 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import ProfileBoard from '@/components/profile/ProfileBoard.vue';
 import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
 import Article from '@/requests/Article.js';
 import { useUserStore } from '@/stores/user';
+import handleError from '@/utils/handleError.js';
 
 const userStore = useUserStore();
 
@@ -11,13 +12,15 @@ const user = computed(() => userStore.user);
 
 const myArticles = ref([]);
 
-onMounted(() => {
-  Article.index({
-    author_ids: [user.value.id],
-  }).then((myArticlesResponse) => {
-    myArticles.value = myArticlesResponse.data.data;
-  });
-});
+try {
+    const response = await Article.index({
+      author_ids: [user.value.id],
+    });
+    myArticles.value = response.data.data;
+} catch (error) {
+    handleError(error);
+}
+
 </script>
 <template>
   <main>

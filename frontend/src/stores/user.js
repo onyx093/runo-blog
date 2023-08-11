@@ -2,6 +2,7 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import User from '@/requests/User.js';
 import handleError from '@/utils/handleError.js';
+import { useRoute } from 'vue-router';
 
 export const useUserStore = defineStore('user', () => {
   const user = ref(undefined);
@@ -24,9 +25,11 @@ export const useUserStore = defineStore('user', () => {
   }
 
   async function logoutUser() {
+    const router = useRoute();
     await User.logout();
     localStorage.removeItem('token');
     user.value = undefined;
+    router.push({ name: 'Home'});
   }
 
   return { user, isLoggedIn, isGuest, setUser, loginUser, logoutUser };

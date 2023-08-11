@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user.js';
+import { useUxStore } from '@/stores/ux.js';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,9 +56,12 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
+  const uxStore = useUxStore();
 
   if (localStorage.getItem('token') && userStore.isGuest) {
+    uxStore.setIsLoading(true);
     await userStore.loginUser();
+    uxStore.setIsLoading(false);
   }
 
   if (to.meta.requiresAuth && userStore.isGuest) {
