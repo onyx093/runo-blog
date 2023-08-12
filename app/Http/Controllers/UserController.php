@@ -8,6 +8,7 @@ use App\Http\Requests\CheckUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -123,5 +124,23 @@ class UserController extends Controller
         $user->tokens()->delete();
 
         return response()->noContent();
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        $user = $request->user();
+
+        if($request->has('img_avatar')) {
+            $avatar_photo = $request->file('img_avatar');
+            $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
+            if(!is_null($user->avatar_url))
+            {
+                $old_avatar_photo_path = 'avatars/' . basename($user->avatar_url);
+                Storage::disk('public')->delete($old_avatar_photo_path);
+            }
+            $user->avatar_url = Storage::url($avatar_photo_path);
+            $user->save();
+        }
+        return $user;
     }
 }

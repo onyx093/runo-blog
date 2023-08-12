@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
     Route::post('/articles/{article}/comments', [ArticleCommentController::class, 'store'])->name('articles.comments.store');
 
     Route::get('/my', [UserController::class, 'my']);
+    Route::post('/my/upload-avatar', [UserController::class, 'uploadAvatar'])->name('users.upload-avatar');
 
 });
 
