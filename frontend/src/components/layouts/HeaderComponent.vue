@@ -19,37 +19,41 @@
               >Articles</router-link
             >
           </li>
-          <li v-if="userStore.isGuest" class="header__nav-item">
-            <a
-              class="header__navItemLink"
-              href="#"
-              @click.prevent="modalStore.openModal('login')"
-              >Sign in</a
-            >
-          </li>
-          <li v-if="userStore.isGuest" class="header__nav-item">
-            <a
-              class="header__navItemLink"
-              href="#"
-              @click.prevent="modalStore.openModal('register')"
-              >Register</a
-            >
-          </li>
-          <li v-if="userStore.isLoggedIn" class="header__nav-item">
-            <router-link
-              class="header__navItemLink"
-              :to="{ name: 'profile.index' }"
-              >My profile</router-link
-            >
-          </li>
-          <li v-if="userStore.isLoggedIn" class="header__nav-item">
-            <a
-              class="header__navItemLink"
-              href="#"
-              @click.prevent="userStore.logoutUser()"
-              >Logout</a
-            >
-          </li>
+          <template v-if="userLoginStatus === undefined">
+            <li class="header__nav-item">
+              <a
+                class="header__navItemLink"
+                href="#"
+                @click.prevent="modalStore.openModal('login')"
+                >Sign in</a
+              >
+            </li>
+            <li class="header__nav-item">
+              <a
+                class="header__navItemLink"
+                href="#"
+                @click.prevent="modalStore.openModal('register')"
+                >Register</a
+              >
+            </li>
+          </template>
+          <template v-if="userLoginStatus">
+              <li class="header__nav-item">
+                <router-link
+                  class="header__navItemLink"
+                  :to="{ name: 'profile.index' }"
+                  >My profile</router-link
+                >
+              </li>
+              <li class="header__nav-item">
+                <a
+                  class="header__navItemLink"
+                  href="#"
+                  @click.prevent="userStore.logoutUser()"
+                  >Logout</a
+                >
+              </li>
+          </template>
         </ul>
       </nav>
     </div>
@@ -59,7 +63,14 @@
 <script setup>
 import { useUserStore } from '@/stores/user.js';
 import { useModalStore } from '@/stores/modal.js';
+import { onMounted, ref } from 'vue';
 
+const userLoginStatus = ref(null);
 const userStore = useUserStore();
 const modalStore = useModalStore();
+
+onMounted(() => {
+    userLoginStatus.value = userStore.isLoggedIn ? userStore.isLoggedIn : userStore.isGuest;
+});
+
 </script>

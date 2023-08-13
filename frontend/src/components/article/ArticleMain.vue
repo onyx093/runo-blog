@@ -4,7 +4,7 @@
       <img src="/images/main_bg.jpg" alt="" />
     </div>
     <div class="mainArticle__inner">
-      <ArticleCategory />
+      <ArticleCategoryList :categories="article.tags" />
       <h2 class="mainArticle__heading">
         <router-link
           class="mainArticle__headingLink"
@@ -24,7 +24,7 @@
 
 <script setup>
 import { computed, defineProps } from 'vue';
-import ArticleCategory from '@/components/article/ArticleCategory.vue';
+import ArticleCategoryList from '@/components/article/ArticleCategoryList.vue';
 import { format } from 'date-fns';
 
 const props = defineProps({

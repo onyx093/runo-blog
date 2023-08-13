@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import ArticleCard from '@/components/article/ArticleCard.vue';
 import ArticleMain from '@/components/article/ArticleMain.vue';
-import HomeCategories from '@/components/homepage/HomeCategories.vue';
+import CategoryList from '@/components/category/CategoryList.vue';
 import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
 import Article from '@/requests/Article.js';
 import handleError from '@/utils/handleError.js';
@@ -31,7 +31,7 @@ try {
 
     <section class="section">
       <div class="section__inner">
-        <HomeCategories />
+        <CategoryList />
 
         <div class="articles">
           <ArticleCard

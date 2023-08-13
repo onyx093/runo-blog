@@ -109,7 +109,6 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
-        $article->update($request->safe()->only(['title', 'content']));
         $article->title = $request->input('title');
         $article->content = $request->input('content');
 

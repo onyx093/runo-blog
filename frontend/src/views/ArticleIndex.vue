@@ -2,7 +2,7 @@
   <main>
     <section class="section">
       <div class="section__inner">
-        <HomeCategories />
+        <CategoryList />
 
         <div class="articles">
           <ArticleCard
@@ -21,7 +21,7 @@
 <script setup>
 import { ref } from 'vue';
 import ArticleCard from '@/components/article/ArticleCard.vue';
-import HomeCategories from '@/components/homepage/HomeCategories.vue';
+import CategoryList from '@/components/category/CategoryList.vue';
 import Article from '@/requests/Article.js';
 import handleError from '@/utils/handleError.js';
 

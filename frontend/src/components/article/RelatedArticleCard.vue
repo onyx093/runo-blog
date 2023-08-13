@@ -1,7 +1,7 @@
 <template>
   <div class="article">
     <div class="article__imageContainer">
-      <ArticleCategory class="articleCategory__list--articleCard" />
+      <ArticleCategoryList :categories="article.tags" class="articleCategory__list--articleCard" />
       <router-link :to="{ name: 'article.show', params: { id: article.id } }">
         <img
           class="article__image"
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import ArticleCategory from '@/components/article/ArticleCategory.vue';
+import ArticleCategoryList from '@/components/article/ArticleCategoryList.vue';
 import { computed, defineProps } from 'vue';
 import { format } from 'date-fns';
 

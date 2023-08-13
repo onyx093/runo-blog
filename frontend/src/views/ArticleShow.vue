@@ -5,7 +5,7 @@
         <img src="/images/show_article_bg.jpg" alt="" />
       </div>
       <div class="mainArticle__inner mainArticle__inner--articleShow">
-        <ArticleCategory />
+        <ArticleCategoryList :categories="article.tags" />
         <h2 class="mainArticle__heading">{{ article.title }}</h2>
         <p class="mainArticle__content">
           <span class="mainArticle__contentText">{{ article.content }}</span>
@@ -18,7 +18,7 @@
         <div class="articleContent__text">
           {{ article.content }}
         </div>
-        <ArticleCategory class="articleCategory__list--articleShow" />
+        <ArticleCategoryList :categories="article.tags" class="articleCategory__list--articleShow" />
 
         <footer class="articleContent__footer">
           <ArticleAuthor :author="article.author" />
@@ -34,9 +34,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import ArticleCategory from '@/components/article/ArticleCategory.vue';
+import ArticleCategoryList from '@/components/article/ArticleCategoryList.vue';
 import ArticleAuthor from '@/components/article/ArticleAuthor.vue';
 import CommentList from '@/components/comment/CommentList.vue';
 import Article from '@/requests/Article';
@@ -45,14 +45,12 @@ import handleError from '@/utils/handleError.js';
 const route = useRoute();
 const article = ref(null);
 
-onMounted(async () => {
-  try {
-    const response = await Article.show(route.params.id);
-    article.value = response.data;
-  } catch (error) {
-    handleError(error);
-  }
-});
+try {
+  const response = await Article.show(route.params.id);
+  article.value = response.data;
+} catch (error) {
+  handleError(error);
+}
 
 const newCommentAdded = (comment) => {
   article.value.comments.unshift(comment);
