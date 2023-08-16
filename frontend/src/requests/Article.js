@@ -7,4 +7,10 @@ export default {
   show(id) {
     return Http.get(`/articles/${id}`);
   },
+  store(params) {
+    return Http.post('/articles', params);
+  },
+  update(articleId, params) {
+    return Http.put(`/articles/${articleId}`, params);
+  },
 };

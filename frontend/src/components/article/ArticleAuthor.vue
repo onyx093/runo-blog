@@ -2,7 +2,9 @@
   <div class="article__authorContainer">
     <img
       class="article__authorImage"
-      src="https://picsum.photos/100/100"
+      :src="
+        author.avatar_url ? author.avatar_url : 'https://picsum.photos/100/100'
+      "
       alt=""
     />
     <div class="article__author-content">

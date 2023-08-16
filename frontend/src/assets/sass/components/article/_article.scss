@@ -37,9 +37,32 @@
   position: relative;
 }
 
+.article--blank {
+  width: 420px;
+  height: 350px;
+  border: 2px dashed black;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .article__imageContainer {
   position: relative;
   background-color: #000000;
+}
+
+.article__editLinkWrapper {
+  padding-left: 0;
+  position: absolute;
+  top: 12px;
+  left: 20px;
+  z-index: 2;
+}
+
+.article__editLink {
+  width: 100%;
+  height: 100%;
 }
 
 .article__categories {

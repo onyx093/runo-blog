@@ -2,14 +2,15 @@
 
 namespace Tests\Feature;
 
-use App\Interfaces\INotificationService;
-use App\Models\Article;
+use Mockery;
 use App\Models\Tag;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Article;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Mockery;
+use App\Interfaces\INotificationService;
 
 class StoreArticleTest extends TestCase
 {
@@ -22,12 +23,14 @@ class StoreArticleTest extends TestCase
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $tags = [$tag->name, 'colours', 'words'];
         $title = 'foobar';
+        $slug = Str::slug($title);
         $content = 'An interesting foobar story';
 
         $response = $this->actingAs($author)->postJson(
             route('articles.store'),
             [
                 'title' => $title,
+                'slug' => $slug,
                 'content' => $content,
                 'tags' => $tags,
             ]
@@ -37,6 +40,7 @@ class StoreArticleTest extends TestCase
             [
                 'id',
                 'title',
+                'slug',
                 'content',
                 'author_id',
                 'created_at',
@@ -58,6 +62,7 @@ class StoreArticleTest extends TestCase
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $tags = [$tag->name, 'colours', 'words'];
         $title = 'foobar';
+        $slug = Str::slug($title);
         $content = 'An interesting foobar story';
         $cover_image = UploadedFile::fake()->image('cover_photo.png');
 
@@ -65,6 +70,7 @@ class StoreArticleTest extends TestCase
             route('articles.store'),
             [
                 'title' => $title,
+                'slug' => $slug,
                 'content' => $content,
                 'tags' => $tags,
                 'cover_photo' => $cover_image,
@@ -75,6 +81,7 @@ class StoreArticleTest extends TestCase
             [
                 'id',
                 'title',
+                'slug',
                 'content',
                 'author_id',
                 'created_at',
@@ -122,6 +129,7 @@ class StoreArticleTest extends TestCase
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $tags = [$tag->name, 'colours', 'words'];
         $title = 'foobar';
+        $slug = Str::slug($title);
         $content = 'An interesting foobar story';
 
         /** @var MockInterface */
@@ -132,6 +140,7 @@ class StoreArticleTest extends TestCase
             route('articles.store'),
             [
                 'title' => $title,
+                'slug' => $slug,
                 'content' => $content,
                 'tags' => $tags,
             ]
@@ -147,6 +156,7 @@ class StoreArticleTest extends TestCase
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $tags = [$tag->name, 'colours', 'words'];
         $title = 'foobar';
+        $slug = Str::slug($title);
         $content = 'An interesting foobar story';
 
         /** @var MockInterface */
@@ -157,6 +167,7 @@ class StoreArticleTest extends TestCase
             route('articles.store'),
             [
                 'title' => $title,
+                'slug' => $slug,
                 'content' => $content,
                 'tags' => $tags,
             ]
@@ -172,6 +183,7 @@ class StoreArticleTest extends TestCase
         $tag = Tag::factory()->set('author_id', $author->id)->createOne();
         $tags = [$tag->name, 'colours', 'words'];
         $title = 'foobar';
+        $slug = Str::slug($title);
         $content = 'An interesting foobar story';
 
         /** @var MockInterface */
@@ -182,6 +194,7 @@ class StoreArticleTest extends TestCase
             route('articles.store'),
             [
                 'title' => $title,
+                'slug' => $slug,
                 'content' => $content,
                 'tags' => $tags,
             ]

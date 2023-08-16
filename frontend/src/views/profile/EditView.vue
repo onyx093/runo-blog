@@ -7,8 +7,11 @@ import Form from '@/components/general/FormComponent.vue';
 import User from '@/requests/User';
 import { toast } from 'vue3-toastify';
 import { useUserStore } from '@/stores/user';
+import handleError from '@/utils/handleError.js';
+import { useErrorStore } from '@/stores/error.js';
 
 const userStore = useUserStore();
+const errorStore = useErrorStore();
 
 const user = computed(() => userStore.user);
 
@@ -22,16 +25,25 @@ const editProfile = async () => {
   try {
     const response = await User.edit(user.value.id, form.value);
     userStore.setUser(response.data);
+    toast('User profile updated!');
   } catch (error) {
-    console.log(error);
+    handleError(error, errorStore);
   }
-  toast('User profile updated!');
 };
 </script>
 
 <template>
   <main>
-    <ProfileBoard :user="user" />
+    <ProfileBoard :user="user" :showProfileInfo="true">
+      <template #nav_links>
+        <RouterLink class="profileLink" :to="{ name: 'profile.index' }"
+          >Back to profile</RouterLink
+        >
+        <RouterLink class="profileLink" :to="{ name: 'profile.edit' }"
+          >Manage subscription</RouterLink
+        >
+      </template>
+    </ProfileBoard>
 
     <div class="editProfileForm">
       <div class="editProfileForm__inner">
@@ -42,7 +54,6 @@ const editProfile = async () => {
             </h2>
 
             <Form
-              v-model:errors="errors"
               v-model:is-processing="isProcessing"
               :handleLogic="editProfile"
             >
@@ -51,7 +62,7 @@ const editProfile = async () => {
                 for-key="name"
                 label="Name"
                 type="text"
-                :required="true"
+                :required="false"
               />
               <Input
                 v-model:value="form.email"

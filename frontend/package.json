@@ -13,12 +13,15 @@
         "format": "prettier --write src/"
     },
     "dependencies": {
+        "@vueup/vue-quill": "^1.2.0",
         "axios": "^1.4.0",
         "date-fns": "^2.30.0",
+        "lodash": "^4.17.21",
         "pinia": "^2.0.36",
         "vite": "^4.3.5",
         "vue": "^3.3.2",
         "vue-image-crop-upload": "^3.0.3",
+        "vue-multiselect": "^3.0.0-beta.2",
         "vue-router": "^4.2.0",
         "vue3-toastify": "^0.1.11"
     },

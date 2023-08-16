@@ -13,6 +13,17 @@
   align-items: center;
 }
 
+.profileHeader {
+  color: $white;
+  text-align: center;
+  font-family: $loraFont;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
 .profilePhoto {
   margin-top: 25px;
   border-radius: 50%;

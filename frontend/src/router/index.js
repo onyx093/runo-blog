@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import HomeView from '@/views/HomeView.vue';
 import { useUserStore } from '@/stores/user.js';
 import { useUxStore } from '@/stores/ux.js';
 
@@ -20,6 +20,22 @@ const router = createRouter({
       path: '/article/:id',
       name: 'article.show',
       component: () => import('../views/ArticleShow.vue'),
+    },
+    {
+      path: '/articles/create',
+      name: 'articles.create',
+      component: () => import('../views/ArticleCreate.vue'),
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/articles/:id/edit',
+      name: 'articles.edit',
+      component: () => import('../views/ArticleEdit.vue'),
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/my-profile',
@@ -58,13 +74,13 @@ router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
   const uxStore = useUxStore();
 
-  if (localStorage.getItem('token') && userStore.isGuest) {
+  if (localStorage.getItem('token') && userStore.isLoggedIn === false) {
     uxStore.setIsLoading(true);
     await userStore.loginUser();
     uxStore.setIsLoading(false);
   }
 
-  if (to.meta.requiresAuth && userStore.isGuest) {
+  if (to.meta.requiresAuth && userStore.isLoggedIn === false) {
     next({ name: 'home' });
   }
 

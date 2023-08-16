@@ -13,24 +13,37 @@ const user = computed(() => userStore.user);
 const myArticles = ref([]);
 
 try {
-    const response = await Article.index({
-      author_ids: [user.value.id],
-    });
-    myArticles.value = response.data.data;
+  const response = await Article.index({
+    author_ids: [user.value.id],
+  });
+  myArticles.value = response.data.data;
 } catch (error) {
-    handleError(error);
+  handleError(error);
 }
-
 </script>
 <template>
   <main>
-    <ProfileBoard :user="user" />
+    <ProfileBoard :user="user" :showProfileInfo="true">
+      <template #nav_links>
+        <RouterLink class="profileLink" :to="{ name: 'profile.edit' }"
+          >Edit profile</RouterLink
+        >
+        <RouterLink class="profileLink" :to="{ name: 'profile.edit' }"
+          >Manage subscription</RouterLink
+        >
+      </template>
+    </ProfileBoard>
 
     <section class="section">
       <div class="section__inner">
         <h2 class="section__heading">My Articles</h2>
 
         <div class="articles articles--related">
+          <div class="article article--blank">
+            <RouterLink class="profileLink" :to="{ name: 'articles.create' }"
+              >Add new article</RouterLink
+            >
+          </div>
           <RelatedArticleCard
             v-for="article in myArticles"
             :key="article.id"
@@ -38,6 +51,7 @@ try {
             :img-width="420"
             :img-height="350"
             :floating-text="true"
+            :editable="true"
           />
         </div>
       </div>

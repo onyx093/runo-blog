@@ -19,7 +19,24 @@
               >Articles</router-link
             >
           </li>
-          <template v-if="userLoginStatus === undefined">
+          <template v-if="userStore.isLoggedIn === true">
+            <li class="header__nav-item">
+              <router-link
+                class="header__navItemLink"
+                :to="{ name: 'profile.index' }"
+                >My profile</router-link
+              >
+            </li>
+            <li class="header__nav-item">
+              <a
+                class="header__navItemLink"
+                href="#"
+                @click.prevent="userStore.logoutUser()"
+                >Logout</a
+              >
+            </li>
+          </template>
+          <template v-if="userStore.isLoggedIn === false">
             <li class="header__nav-item">
               <a
                 class="header__navItemLink"
@@ -37,23 +54,6 @@
               >
             </li>
           </template>
-          <template v-if="userLoginStatus">
-              <li class="header__nav-item">
-                <router-link
-                  class="header__navItemLink"
-                  :to="{ name: 'profile.index' }"
-                  >My profile</router-link
-                >
-              </li>
-              <li class="header__nav-item">
-                <a
-                  class="header__navItemLink"
-                  href="#"
-                  @click.prevent="userStore.logoutUser()"
-                  >Logout</a
-                >
-              </li>
-          </template>
         </ul>
       </nav>
     </div>
@@ -63,14 +63,7 @@
 <script setup>
 import { useUserStore } from '@/stores/user.js';
 import { useModalStore } from '@/stores/modal.js';
-import { onMounted, ref } from 'vue';
 
-const userLoginStatus = ref(null);
 const userStore = useUserStore();
 const modalStore = useModalStore();
-
-onMounted(() => {
-    userLoginStatus.value = userStore.isLoggedIn ? userStore.isLoggedIn : userStore.isGuest;
-});
-
 </script>

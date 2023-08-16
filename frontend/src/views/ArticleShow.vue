@@ -18,7 +18,10 @@
         <div class="articleContent__text">
           {{ article.content }}
         </div>
-        <ArticleCategoryList :categories="article.tags" class="articleCategory__list--articleShow" />
+        <ArticleCategoryList
+          :categories="article.tags"
+          class="articleCategory__list--articleShow"
+        />
 
         <footer class="articleContent__footer">
           <ArticleAuthor :author="article.author" />

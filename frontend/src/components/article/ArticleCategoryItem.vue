@@ -2,15 +2,15 @@
 import { defineProps } from 'vue';
 
 defineProps({
-    category: {
-        type: Object,
-        required: true,
-    }
+  category: {
+    type: Object,
+    required: true,
+  },
 });
 </script>
 
 <template>
-    <li class="articleCategory__item">
-      <a href="#" class="articleCategory__itemLink">{{ category.name }}</a>
-    </li>
+  <li class="articleCategory__item">
+    <a href="#" class="articleCategory__itemLink">{{ category.name }}</a>
+  </li>
 </template>

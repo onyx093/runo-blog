@@ -1,14 +1,14 @@
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import User from '@/requests/User.js';
 import handleError from '@/utils/handleError.js';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 export const useUserStore = defineStore('user', () => {
-  const user = ref(undefined);
+  const user = ref(null);
+  const router = useRouter();
 
-  const isLoggedIn = computed(() => user.value !== undefined);
-  const isGuest = computed(() => user.value === undefined);
+  const isLoggedIn = computed(() => user.value !== null);
 
   function setUser(newUser) {
     user.value = newUser;
@@ -20,17 +20,16 @@ export const useUserStore = defineStore('user', () => {
       user.value = response.data;
     } catch (error) {
       handleError(error);
-      user.value = undefined;
+      user.value = null;
     }
   }
 
   async function logoutUser() {
-    const router = useRoute();
     await User.logout();
     localStorage.removeItem('token');
-    user.value = undefined;
-    router.push({ name: 'Home'});
+    user.value = null;
+    router.push({ name: 'home' });
   }
 
-  return { user, isLoggedIn, isGuest, setUser, loginUser, logoutUser };
+  return { user, isLoggedIn, setUser, loginUser, logoutUser };
 });

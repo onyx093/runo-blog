@@ -6,6 +6,7 @@ use App\Models\Tag;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Article;
+use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -25,8 +26,11 @@ class UpdateArticleTest extends TestCase
         }
         $tags[] = 'colours';
         $tags[] = 'words';
+        $title = fake()->words(4, true);
+        $slug = Str::slug($title);
         $data = [
-            'title' => fake()->words(4, true),
+            'title' => $title,
+            'slug' => $slug,
             'content' => fake()->sentence(),
             'tags' => $tags,
         ];
@@ -36,6 +40,8 @@ class UpdateArticleTest extends TestCase
 
         $this->assertDatabaseHas('articles', [
             'id' => $article->id,
+            'title' => $data['title'],
+            'slug' => $data['slug'],
             'content' => $data['content'],
             'author_id' => $article->author_id,
         ]);
@@ -56,8 +62,11 @@ class UpdateArticleTest extends TestCase
         $tags[] = 'colours';
         $tags[] = 'words';
         $cover_image = UploadedFile::fake()->image('cover_photo.jpg');
+        $title = fake()->words(4, true);
+        $slug = Str::slug($title);
         $data = [
-            'title' => fake()->words(4, true),
+            'title' => $title,
+            'slug' => $slug,
             'content' => fake()->sentence(),
             'tags' => $tags,
             'cover_photo' => $cover_image,
@@ -68,6 +77,8 @@ class UpdateArticleTest extends TestCase
 
         $this->assertDatabaseHas('articles', [
             'id' => $article->id,
+            'title' => $data['title'],
+            'slug' => $data['slug'],
             'content' => $data['content'],
             'author_id' => $article->author_id,
             'cover_url' => asset(Storage::url('covers/' . $cover_image->hashName())),

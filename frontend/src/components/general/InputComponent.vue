@@ -7,8 +7,7 @@
       v-bind="$attrs"
       :class="{ 'input--error': errorStore.getError(forKey) }"
       :required="required"
-      @input="(event) => emits('update:value', event.target.value)"
-      @change="errorStore.deleteError(forKey)"
+      @input="onInputChange(forKey, $event)"
     ></textarea>
     <input
       v-else
@@ -19,8 +18,7 @@
       :required="required"
       :value="value"
       :readonly="readonly"
-      @input="(event) => emits('update:value', event.target.value)"
-      @change="errorStore.deleteError(forKey)"
+      @input="onInputChange(forKey, $event)"
     />
     <span v-if="errorStore.getError(forKey)" class="input__errorText">{{
       errorStore.getError(forKey)
@@ -67,4 +65,9 @@ defineProps({
     default: false,
   },
 });
+
+const onInputChange = (forKey, event) => {
+  emits('update:value', event.target.value);
+  errorStore.deleteError(forKey);
+};
 </script>

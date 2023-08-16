@@ -65,8 +65,8 @@ class UserController extends Controller
     {
         $user->name = $request->input('name');
 
-        if($request->has('avatar')) {
-            $avatar_photo = $request->file('avatar');
+        if($request->has('img_avatar')) {
+            $avatar_photo = $request->file('img_avatar');
             $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
             if(!is_null($user->avatar_url))
             {

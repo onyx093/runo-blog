@@ -31,6 +31,23 @@ class TagController extends Controller
                         $query->where('author_id', '=', $authorId);
                     }
                 )
+                ->get();
+        return $tags;
+    }
+
+    /**
+     * Display a paginated listing of the resource.
+     */
+    public function indexWithPagination()
+    {
+        $tags = Tag::query()
+                ->with(['articles'])
+                ->when(
+                    request('author_id'),
+                    function(Builder $query, string $authorId) {
+                        $query->where('author_id', '=', $authorId);
+                    }
+                )
                 ->paginate(8);
         return $tags;
     }

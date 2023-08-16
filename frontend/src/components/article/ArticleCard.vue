@@ -1,7 +1,10 @@
 <template>
   <div class="article">
     <div class="article__imageContainer">
-      <ArticleCategoryList :categories="article.tags" class="articleCategory__list--articleCard" />
+      <ArticleCategoryList
+        :categories="article.tags"
+        class="articleCategory__list--articleCard"
+      />
       <router-link :to="{ name: 'article.show', params: { id: article.id } }">
         <img
           class="article__image"

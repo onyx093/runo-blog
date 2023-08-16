@@ -24,6 +24,7 @@ class UpdateArticleRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string'],
+            'slug' => ['required', 'string'],
             'content' => ['required', 'string'],
             'tags' => ['sometimes', 'array'],
             'cover_photo' => ['sometimes', File::image()],

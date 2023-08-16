@@ -4,6 +4,13 @@
   padding: 45px 0;
 }
 
+.formSection {
+  display: flex;
+  width: 100%;
+  background-color: $logoColor;
+  padding: 45px 0;
+}
+
 .section__inner {
   @include container;
   @include for-tablet-down {

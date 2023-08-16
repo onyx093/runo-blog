@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Interfaces\INotificationService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ArticleController extends Controller
@@ -61,9 +62,12 @@ class ArticleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreArticleRequest $request)
+    public function store(Request $request)
     {
-        $article = new Article($request->safe()->only(['title', 'content']));
+        $article = new Article();
+        $article->title = $request->input('title');
+        $article->slug = $request->input('slug');
+        $article->content = $request->input('content');
         $article->author_id = Auth::id();
 
         if($request->hasFile('cover_photo')) {
@@ -110,6 +114,7 @@ class ArticleController extends Controller
     public function update(UpdateArticleRequest $request, Article $article)
     {
         $article->title = $request->input('title');
+        $article->slug = $request->input('slug');
         $article->content = $request->input('content');
 
         if($request->hasFile('cover_photo')) {

@@ -18,7 +18,7 @@ class Article extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'content', 'author_id'];
+    protected $fillable = ['title', 'slug', 'content', 'author_id'];
 
     public function comments(): HasMany
     {

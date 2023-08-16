@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        $defaultUser = User::factory()->set('email', 'test@example.com')->set('password', 'password123')->has(Article::factory(4))->createOne();
         $users = User::factory(7)->create()->each( function($user) {
 
             Tag::factory()->create([
@@ -40,6 +39,21 @@ class DatabaseSeeder extends Seeder
                     'author_id' => $users->random(1)[0]->id,
                 ]);
             });
+        });
+
+        $defaultUser = User::factory()
+                            ->set('email', 'test@example.com')
+                            ->set('password', 'password123')
+                            ->has(Article::factory(4))
+                            ->createOne();
+                            
+        $defaultUser->articles()->each(function($article) use ($tags, $users) {
+            $article->tags()->attach($tags->random(rand(1, 2)));
+
+            Comment::factory(rand(2, 5))->create([
+                'article_id' => $article->id,
+                'author_id' => $users->random(1)[0]->id,
+            ]);
         });
     }
 }
