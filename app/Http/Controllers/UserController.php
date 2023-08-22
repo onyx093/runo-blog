@@ -40,7 +40,7 @@ class UserController extends Controller
         }
 
         $user = new User($request->safe()->only(['name', 'email', 'password']));
-        if($request->has('avatar')) {
+        if ($request->has('avatar')) {
             $avatar_photo = $request->file('avatar');
             $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
             $user->avatar_url = Storage::url($avatar_photo_path);
@@ -56,7 +56,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $user->load('articles', 'comments');
+        return $user->load('articles.tags', 'comments');
     }
 
     /**
@@ -66,11 +66,10 @@ class UserController extends Controller
     {
         $user->name = $request->input('name');
 
-        if($request->has('img_avatar')) {
+        if ($request->has('img_avatar')) {
             $avatar_photo = $request->file('img_avatar');
             $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
-            if(!is_null($user->avatar_url))
-            {
+            if (!is_null($user->avatar_url)) {
                 $old_avatar_photo_path = 'avatars/' . basename($user->avatar_url);
                 Storage::disk('public')->delete($old_avatar_photo_path);
             }
@@ -131,11 +130,10 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        if($request->has('img_avatar')) {
+        if ($request->has('img_avatar')) {
             $avatar_photo = $request->file('img_avatar');
             $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
-            if(!is_null($user->avatar_url))
-            {
+            if (!is_null($user->avatar_url)) {
                 $old_avatar_photo_path = 'avatars/' . basename($user->avatar_url);
                 Storage::disk('public')->delete($old_avatar_photo_path);
             }
@@ -151,7 +149,7 @@ class UserController extends Controller
         if ($follower->id == $user->id) {
             return response()->json(["errors" => ['message' => ["You can't follow yourself."]]], 422);
         }
-        if(!$follower->isFollowing($user->id)) {
+        if (!$follower->isFollowing($user->id)) {
             $newUser = $follower->follow($user->id);
 
             // sending a notification
@@ -164,7 +162,7 @@ class UserController extends Controller
     public function unfollow(User $user)
     {
         $follower = auth()->user();
-        if($follower->isFollowing($user->id)) {
+        if ($follower->isFollowing($user->id)) {
             $follower->unfollow($user->id);
             return response()->json(["success" => ['message' => ["You are no longer friends with {$user->name}"]]], 201);
         }

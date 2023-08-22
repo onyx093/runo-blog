@@ -38,6 +38,17 @@ const router = createRouter({
       },
     },
     {
+      path: '/users/:id',
+      name: 'users.show',
+      component: () => import('../views/profile/ShowView.vue'),
+      beforeEnter: (to, from) => {
+        const userStore = useUserStore();
+        if (to.params.id == userStore.user.id) {
+          router.push({ name: 'profile.index' });
+        }
+      },
+    },
+    {
       path: '/my-profile',
       name: 'profile.index',
       component: () => import('../views/profile/IndexView.vue'),

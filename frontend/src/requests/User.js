@@ -16,4 +16,13 @@ export default {
   async logout() {
     return await Http.get(`/logout`);
   },
+  async show(id) {
+    return await Http.get(`/users/${id}`);
+  },
+  async follow(id) {
+    return await Http.post(`/users/${id}/follow`);
+  },
+  async unfollow(id) {
+    return await Http.post(`/users/${id}/unfollow`);
+  },
 };

@@ -11,6 +11,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  owner: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const showUploadForm = ref(false);
@@ -32,6 +36,7 @@ const cropSuccess = (imgDataUrl) => {
       <template v-if="showProfileInfo === true">
         <div class="profilePhoto">
           <my-upload
+            v-if="owner"
             v-model="showUploadForm"
             lang-type="en"
             field="img_avatar"
@@ -55,6 +60,7 @@ const cropSuccess = (imgDataUrl) => {
           <span class="profileInfo__contentDivider"></span>
         </div>
       </template>
+      <slot name="default"></slot>
       <div class="profileLinks">
         <slot name="nav_links"></slot>
       </div>
