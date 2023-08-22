@@ -27,6 +27,7 @@
                 >My profile</router-link
               >
             </li>
+            <NotificationComponent />
             <li class="header__nav-item">
               <a
                 class="header__navItemLink"
@@ -63,6 +64,7 @@
 <script setup>
 import { useUserStore } from '@/stores/user.js';
 import { useModalStore } from '@/stores/modal.js';
+import NotificationComponent from '@/components/layouts/NotificationComponent.vue';
 
 const userStore = useUserStore();
 const modalStore = useModalStore();
