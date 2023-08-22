@@ -20,6 +20,9 @@ const user = ref(null);
 
 const myArticles = ref([]);
 
+const visibleArticles = ref(false);
+const visibleFollowers = ref(false);
+
 try {
   const response = await User.show(route.params.id);
   user.value = response.data;
@@ -37,6 +40,16 @@ const handleClick = () => {
     handleError(error, errorStore);
   }
 };
+
+const showArticles = () => {
+  visibleArticles.value = !visibleArticles.value;
+  visibleFollowers.value = false;
+};
+
+const showFollowers = () => {
+  visibleArticles.value = false;
+  visibleFollowers.value = !visibleFollowers.value;
+};
 </script>
 <template>
   <main>
@@ -46,18 +59,34 @@ const handleClick = () => {
     </ProfileBoard>
 
     <section class="section">
+      <div class="section__info">
+        <div class="section__info-item" @click="showArticles">
+          {{ user.articles.length + ' articles' }}
+        </div>
+        <div class="section__info-item" @click="showFollowers">
+          {{ user.followers?.length ?? '0 followers' }}
+        </div>
+      </div>
       <div class="section__inner">
-        <h2 class="section__heading">Articles</h2>
-        <div class="articles articles--related">
-          <RelatedArticleCard
-            v-for="article in myArticles"
-            :key="article.id"
-            :article="article"
-            :img-width="420"
-            :img-height="350"
-            :floating-text="true"
-            :editable="true"
-          />
+        <div v-if="visibleArticles" class="section__inner-articles">
+          <h2 class="section__heading">Articles</h2>
+          <div class="articles articles--related">
+            <RelatedArticleCard
+              v-for="article in myArticles"
+              :key="article.id"
+              :article="article"
+              :img-width="420"
+              :img-height="350"
+              :floating-text="true"
+              :editable="true"
+            />
+          </div>
+        </div>
+        <div v-if="visibleFollowers" class="section__inner-followers">
+          <h2 class="section__heading">Followers</h2>
+          <ul>
+            <li v-for="follower in user.followers">{{ follower }}</li>
+          </ul>
         </div>
       </div>
     </section>

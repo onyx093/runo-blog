@@ -1,5 +1,6 @@
 .section {
   display: flex;
+  flex-direction: column;
   background-color: $logoColor;
   padding: 45px 0;
 }
@@ -62,4 +63,21 @@
 
 .section__categoryLink--active {
   color: $primaryColor;
+}
+
+.section__info {
+  display: flex;
+  justify-content: space-around;
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 30px;
+  border-top: 2px solid #d4a373;
+  border-bottom: 2px solid #d4a373;
+}
+
+.section__info-item {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.5rem;
 }
