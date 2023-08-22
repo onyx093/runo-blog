@@ -70,7 +70,7 @@
   justify-content: space-around;
   max-width: 500px;
   width: 100%;
-  margin: 0 auto;
+  margin: 0 auto 25px;
   padding: 30px;
   border-top: 2px solid #d4a373;
   border-bottom: 2px solid #d4a373;
@@ -80,4 +80,41 @@
   cursor: pointer;
   font-weight: 700;
   font-size: 1.5rem;
+}
+
+.section__followers-container {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.section__followers-item {
+  display: flex;
+  align-items: center;
+  column-gap: 50px;
+  margin: 20px;
+  text-decoration: none;
+  padding: 10px;
+  transition: 0.7s;
+
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  }
+}
+
+.section__followers-item--img {
+  border-radius: 50%;
+  max-width: 100px;
+  max-height: auto;
+}
+
+.section__followers-item--name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: black;
+  transition: 0.8s;
+
+  &:hover {
+    color: $primaryColor;
+  }
 }

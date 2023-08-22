@@ -23,6 +23,39 @@ const myArticles = ref([]);
 const visibleArticles = ref(false);
 const visibleFollowers = ref(false);
 
+const followers = ref([
+  {
+    id: 1,
+    avatar_url: 'https://picsum.photos/100/100',
+    name: 'Name 1',
+  },
+  {
+    id: 2,
+    avatar_url: 'https://picsum.photos/100/100',
+    name: 'Name 1',
+  },
+  {
+    id: 3,
+    avatar_url: 'https://picsum.photos/100/100',
+    name: 'Name 1',
+  },
+  {
+    id: 4,
+    avatar_url: 'https://picsum.photos/100/100',
+    name: 'Name 1',
+  },
+  {
+    id: 5,
+    avatar_url: 'https://picsum.photos/100/100',
+    name: 'Name 1',
+  },
+  {
+    id: 6,
+    avatar_url: 'https://picsum.photos/100/100',
+    name: 'Name 1',
+  },
+]);
+
 try {
   const response = await User.show(route.params.id);
   user.value = response.data;
@@ -64,7 +97,8 @@ const showFollowers = () => {
           {{ user.articles.length + ' articles' }}
         </div>
         <div class="section__info-item" @click="showFollowers">
-          {{ user.followers?.length ?? '0 followers' }}
+          {{ followers?.length ?? '0' }}
+          <span> followers</span>
         </div>
       </div>
       <div class="section__inner">
@@ -84,8 +118,22 @@ const showFollowers = () => {
         </div>
         <div v-if="visibleFollowers" class="section__inner-followers">
           <h2 class="section__heading">Followers</h2>
-          <ul>
-            <li v-for="follower in user.followers">{{ follower }}</li>
+          <ul class="section__followers-container">
+            <router-link
+              :to="{ name: 'users.show', params: { id: follower.id } }"
+              class="section__followers-item"
+              v-for="follower in followers"
+              :key="follower.id"
+            >
+              <img
+                class="section__followers-item--img"
+                :src="follower.avatar_url"
+                alt=""
+              />
+              <span class="section__followers-item--name">{{
+                follower.name
+              }}</span>
+            </router-link>
           </ul>
         </div>
       </div>
