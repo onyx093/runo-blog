@@ -7,8 +7,11 @@ use App\Http\Controllers\{
     TagController,
     UserController
 };
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+use Laravel\Socialite\Facades\Socialite;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,7 +31,7 @@ Route::get('/logout', [UserController::class, 'logout'])->middleware('auth:sanct
 $guestRoutes = ['index', 'show'];
 
 // Authenticated routes
-Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
+Route::middleware('auth:sanctum')->group(function () use ($guestRoutes) {
     Route::apiResource('/articles', ArticleController::class)->except($guestRoutes);
     Route::apiResource('/comments', CommentController::class)->except($guestRoutes);
     Route::apiResource('/tags', TagController::class)->except($guestRoutes);
@@ -41,7 +44,6 @@ Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
 
     Route::get('/my', [UserController::class, 'my']);
     Route::post('/my/upload-avatar', [UserController::class, 'uploadAvatar'])->name('users.upload-avatar');
-
 });
 
 // Guest routes
@@ -51,3 +53,26 @@ Route::apiResource('/tags', TagController::class)->only($guestRoutes);
 Route::apiResource('/users', UserController::class)->only($guestRoutes);
 
 Route::get('/articles/{article}/comments', [ArticleCommentController::class, 'show'])->name('articles.comments.show');
+
+Route::group(['middleware' => ['web']], function () {
+    // your routes here
+
+    Route::get('/auth/redirect', function () {
+        return Socialite::driver('github')->redirect();
+    });
+
+    Route::get('/auth/callback', function () {
+        dd(Socialite::driver('github')->stateless());
+        $githubUser = Socialite::driver('github')->stateless()->user();
+
+        $user = User::updateOrCreate([
+            'email' => $githubUser->email,
+        ], [
+            'name' => $githubUser->name,
+        ]);
+
+        Auth::login($user);
+
+        return redirect('/');
+    });
+});
