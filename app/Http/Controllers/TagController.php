@@ -21,7 +21,7 @@ class TagController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function indexWithoutPagination()
     {
         $tags = Tag::query()
                 ->with(['articles'])
@@ -38,7 +38,7 @@ class TagController extends Controller
     /**
      * Display a paginated listing of the resource.
      */
-    public function indexWithPagination()
+    public function index()
     {
         $tags = Tag::query()
                 ->with(['articles'])

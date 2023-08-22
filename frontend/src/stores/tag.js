@@ -19,5 +19,9 @@ export const useTagStore = defineStore('tag', () => {
     return await Tag.show(tagId);
   }
 
-  return { tags, getTags, getTag };
+  function onSelectedTag(tagId) {
+    return tagId;
+  }
+
+  return { tags, getTags, getTag, onSelectedTag };
 });

@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Interfaces\INotificationService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ArticleController extends Controller
@@ -42,6 +41,10 @@ class ArticleController extends Controller
                         static::filterByRelationshipIds('tags', 'tags.id'),
                     )
                     ->when(
+                        request()->input('tag_names'),
+                        static::filterByRelationshipIds('tags', 'tags.name'),
+                    )
+                    ->when(
                         request()->input('author_ids'),
                         static::filterByRelationshipIds('author', 'users.id'),
                     )
@@ -62,7 +65,7 @@ class ArticleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreArticleRequest $request)
     {
         $article = new Article();
         $article->title = $request->input('title');

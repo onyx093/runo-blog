@@ -13,4 +13,10 @@ export default {
   update(articleId, params) {
     return Http.put(`/articles/${articleId}`, params);
   },
+  withTagId(tag) {
+    return Http.get(`/articles?tag_ids[]=${tag}`);
+  },
+  withTagName(tag) {
+    return Http.get(`/articles?tag_names[]=${tag}`);
+  },
 };

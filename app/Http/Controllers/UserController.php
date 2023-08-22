@@ -9,6 +9,7 @@ use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -142,5 +143,36 @@ class UserController extends Controller
             $user->save();
         }
         return $user;
+    }
+
+    public function follow(User $user)
+    {
+        $follower = Auth::user();
+        if ($follower->id == $user->id) {
+            return response()->json(["errors" => ['message' => ["You can't follow yourself."]]], 422);
+        }
+        if(!$follower->isFollowing($user->id)) {
+            $newUser = $follower->follow($user->id);
+
+            // sending a notification
+            // $user->notify(new UserFollowed($follower));
+            return response()->json(["success" => ['message' => ["You are now friends with {$user->name}"]]], 201);
+        }
+        return response()->json(["errors" => ['message' => ["You are already following {$user->name}"]]], 422);
+    }
+
+    public function unfollow(User $user)
+    {
+        $follower = auth()->user();
+        if($follower->isFollowing($user->id)) {
+            $follower->unfollow($user->id);
+            return response()->json(["success" => ['message' => ["You are no longer friends with {$user->name}"]]], 201);
+        }
+        return response()->json(["errors" => ['message' => ["You are not following {$user->name}"]]], 422);
+    }
+
+    public function notifications()
+    {
+        // return auth()->user()->unreadNotifications()->limit(5)->get()->toArray();
     }
 }

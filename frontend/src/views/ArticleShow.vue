@@ -15,9 +15,7 @@
     </section>
     <section class="articleContent">
       <div class="articleContent__inner">
-        <div class="articleContent__text">
-          {{ article.content }}
-        </div>
+        <div class="articleContent__text">{{ article.content }}</div>
         <ArticleCategoryList
           :categories="article.tags"
           class="articleCategory__list--articleShow"

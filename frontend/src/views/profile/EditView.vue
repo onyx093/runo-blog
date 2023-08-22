@@ -34,7 +34,7 @@ const editProfile = async () => {
 
 <template>
   <main>
-    <ProfileBoard :user="user" :showProfileInfo="true">
+    <ProfileBoard :user="user" :show-profile-info="true">
       <template #nav_links>
         <RouterLink class="profileLink" :to="{ name: 'profile.index' }"
           >Back to profile</RouterLink
@@ -55,7 +55,7 @@ const editProfile = async () => {
 
             <Form
               v-model:is-processing="isProcessing"
-              :handleLogic="editProfile"
+              :handle-logic="editProfile"
             >
               <Input
                 v-model:value="form.name"

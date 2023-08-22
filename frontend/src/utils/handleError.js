@@ -9,6 +9,7 @@ export default (error, errorStore = undefined) => {
   } else if (error.response.status === 401) {
     toast.error('Unexpected error occurred. Please, try again later.');
   } else {
+    console.log(error.response.data.errors);
     toast.error('Unexpected error occurred. Please, try again later.');
   }
 };

@@ -34,6 +34,9 @@ Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
     Route::apiResource('/tags', TagController::class)->except($guestRoutes);
     Route::apiResource('/users', UserController::class)->except($guestRoutes);
 
+    Route::post('/users/{user}/follow', [UserController::class, 'follow'])->name('user.follow');
+    Route::post('/users/{user}/unfollow', [UserController::class, 'unfollow'])->name('user.unfollow');
+
     Route::post('/articles/{article}/comments', [ArticleCommentController::class, 'store'])->name('articles.comments.store');
 
     Route::get('/my', [UserController::class, 'my']);

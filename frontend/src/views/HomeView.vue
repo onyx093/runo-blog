@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, provide, ref } from 'vue';
 import ArticleCard from '@/components/article/ArticleCard.vue';
 import ArticleMain from '@/components/article/ArticleMain.vue';
 import CategoryList from '@/components/category/CategoryList.vue';
@@ -12,6 +12,25 @@ const articles = ref([]);
 
 const featuredArticle = computed(() => articles.value[0]);
 const editorsPickArticles = ref([]);
+
+let category = ref(null);
+const filteredArticles = ref(articles);
+
+const selectedTag = async (value) => {
+  category = computed(() => {
+    return value;
+  });
+
+  if (category.value !== 'view all') {
+    const response = await Article.withTagName(category.value);
+    filteredArticles.value = response.data.data;
+  } else {
+    const response = await Article.index();
+    filteredArticles.value = response.data.data;
+  }
+};
+
+provide('selectedTag', selectedTag);
 
 const request1 = Article.index();
 const request2 = Article.index();
@@ -35,7 +54,7 @@ try {
 
         <div class="articles">
           <ArticleCard
-            v-for="article in articles"
+            v-for="article in filteredArticles"
             :key="article.id"
             :article="article"
             :img-width="310"

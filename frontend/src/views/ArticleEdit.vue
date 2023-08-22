@@ -10,45 +10,46 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useErrorStore } from '@/stores/error';
 import { kebabCase } from 'lodash';
 import { useRoute, useRouter } from 'vue-router';
-// import { useTagStore } from '@/stores/tag';
 import Tag from '@/requests/Tag.js';
 import Article from '@/requests/Article.js';
 import Multiselect from '../../node_modules/vue-multiselect';
 import axios from 'axios';
+import myUpload from 'vue-image-crop-upload';
 
 const userStore = useUserStore();
-// const tagStore = useTagStore();
 const errorStore = useErrorStore();
 const router = useRouter();
 const route = useRoute();
 
 const user = computed(() => userStore.user);
 const tags = ref([]);
+const showUploadForm = ref(false);
 
 const article = ref({});
+const articleCoverImage = ref(article.value.cover_url);
 
 const tagRequest = Tag.index();
 const articleRequest = Article.show(route.params.id);
 
 onMounted(async () => {
-    try {
-      const [tagResponse, articleResponse] = await axios.all([
-        tagRequest,
-        articleRequest,
-      ]);
-      tags.value = tagResponse.data.map((tag) => {
-        return {
-          id: tag.id,
-          name: tag.name,
-        };
-      });
-      console.log(articleResponse.data);
-      article.value = articleResponse.data;
-      form.value.title = article.value.title;
-      form.value.content = article.value.content;
-    } catch (error) {
-      handleError(error, errorStore);
-    }
+  try {
+    const [tagResponse, articleResponse] = await axios.all([
+      tagRequest,
+      articleRequest,
+    ]);
+    tags.value = tagResponse.data.data.map((tag) => {
+      return {
+        id: tag.id,
+        name: tag.name,
+      };
+    });
+    // console.log(articleResponse.data);
+    article.value = articleResponse.data;
+    form.value.title = article.value.title;
+    form.value.content = article.value.content;
+  } catch (error) {
+    handleError(error, errorStore);
+  }
 });
 
 const isProcessing = ref(false);
@@ -75,14 +76,16 @@ const updateArticle = async () => {
     toast.success('Article has been updated!');
     setTimeout(() => {
       router.push({ name: 'article.show', params: { id: response.data.id } });
-    }, 3000);
+    }, 2000);
   } catch (error) {
     handleError(error);
   }
 };
 
-const uploadImage = (event) => {
-  form.value.cover_photo = event.target.files[0];
+const cropSuccess = (imgDataUrl) => {
+  const newImage = new File();
+  form.value.cover_photo = imgDataUrl;
+  articleCoverImage.value = imgDataUrl;
 };
 
 const formattedDate = computed(() => new Date().toLocaleDateString());
@@ -114,8 +117,9 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
 
             <Form
               v-model:is-processing="isProcessing"
-              :handleLogic="updateArticle"
+              :handle-logic="updateArticle"
               class="manageArticleForm"
+              enctype="multipart/form-data"
             >
               <div class="manageArticleForm__inner">
                 <div class="manageArticleForm__formGroup">
@@ -137,10 +141,10 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
                   <div class="input__group">
                     <label class="input__label">Tags</label>
                     <QuillEditor
+                      v-model:content="form.content"
                       theme="snow"
                       placeholder="Add content"
-                      content-type="html"
-                      v-model:content="form.content"
+                      content-type="delta"
                     />
                   </div>
                 </div>
@@ -167,13 +171,28 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
                     ></Multiselect>
                   </div>
                   <div class="input__group">
-                    <label class="input__label" for="cover_photo">Cover</label>
-                    <input
-                      class="input"
-                      type="file"
-                      accept="image/*"
-                      @change="uploadImage"
-                    />
+                    <div class="coverPhoto">
+                      <my-upload
+                        v-model="showUploadForm"
+                        field="img_cover"
+                        :width="1200"
+                        :height="800"
+                        lang-type="en"
+                        img-format="png"
+                        no-circle
+                        no-square
+                        @crop-success="cropSuccess"
+                      ></my-upload>
+                      <img
+                        class="coverPhoto__img"
+                        :src="articleCoverImage"
+                        alt=""
+                        @click="showUploadForm = !showUploadForm"
+                      />
+                    </div>
+                    <div class="input__group">
+                      <input type="file" name="cover_photo" />
+                    </div>
                   </div>
                 </div>
               </div>

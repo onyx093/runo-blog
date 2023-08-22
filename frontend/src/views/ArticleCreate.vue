@@ -6,36 +6,38 @@ import InputComponent from '@/components/general/InputComponent.vue';
 import Button from '@/components/general/ButtonComponent.vue';
 import Form from '@/components/general/FormComponent.vue';
 import { toast } from 'vue3-toastify';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useErrorStore } from '@/stores/error';
 import Article from '@/requests/Article';
 import { kebabCase } from 'lodash';
 import { useRouter } from 'vue-router';
-// import { useTagStore } from '@/stores/tag';
 import Tag from '@/requests/Tag.js';
 import Multiselect from '../../node_modules/vue-multiselect';
 
 const userStore = useUserStore();
-// const tagStore = useTagStore();
 const errorStore = useErrorStore();
 const router = useRouter();
 
 const user = computed(() => userStore.user);
 const tags = ref([]);
 
-try {
-  const response = await Tag.index();
-  tags.value = response.data.map((tag) => {
-    return {
-      id: tag.id,
-      name: tag.name,
-    };
-  });
-} catch (error) {
-  handleError(error, errorStore);
-}
+onMounted(async () => {
+  try {
+    const response = await Tag.index();
+    tags.value = response.data.data.map((tag) => {
+      return {
+        id: tag.id,
+        name: tag.name,
+      };
+    });
+  } catch (error) {
+    handleError(error, errorStore);
+  }
+});
 
 const isProcessing = ref(false);
+const showImagePreview = ref(false);
+
 const form = ref({
   title: '',
   slug: '',
@@ -51,22 +53,26 @@ watch(slugText, (newSlugText) => {
 });
 
 const addNewArticle = async () => {
+  console.log(form.value);
   if (selectedTags.value.length > 0) {
     form.value.tags = selectedTags.value.map((tag) => tag.name);
   }
-  try {
+  /* try {
     const response = await Article.store(form.value);
     toast.success('New article created!');
     setTimeout(() => {
       router.push({ name: 'article.show', params: { id: response.data.id } });
-    }, 3000);
+    }, 2000);
   } catch (error) {
     handleError(error);
-  }
+  } */
 };
 
 const uploadImage = (event) => {
+  console.log(event.target.files[0]);
   form.value.cover_photo = event.target.files[0];
+  showImagePreview.value = true;
+  console.log('In form data', form.value.cover_photo);
 };
 
 const formattedDate = computed(() => new Date().toLocaleDateString());
@@ -98,7 +104,7 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
 
             <Form
               v-model:is-processing="isProcessing"
-              :handleLogic="addNewArticle"
+              :handle-logic="addNewArticle"
               class="manageArticleForm"
             >
               <div class="manageArticleForm__inner">
@@ -121,10 +127,10 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
                   <div class="input__group">
                     <label class="input__label">Tags</label>
                     <QuillEditor
+                      v-model:content="form.content"
                       theme="snow"
                       placeholder="Add content"
-                      content-type="html"
-                      v-model:content="form.content"
+                      content-type="delta"
                     />
                   </div>
                 </div>
@@ -133,7 +139,7 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
                     :value="formattedDate"
                     for-key="title"
                     label="Date"
-                    type="text"
+                    type="delta"
                     :required="false"
                   />
                   <div class="input__group">
@@ -151,6 +157,11 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
                     ></Multiselect>
                   </div>
                   <div class="input__group">
+                    <img
+                      v-if="showImagePreview"
+                      class="coverPhoto__img"
+                      alt=""
+                    />
                     <label class="input__label" for="cover_photo">Cover</label>
                     <input
                       class="input"
