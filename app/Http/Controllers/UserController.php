@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserFollowed;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\CheckUserRequest;
@@ -9,6 +10,7 @@ use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -66,8 +68,8 @@ class UserController extends Controller
     {
         $user->name = $request->input('name');
 
-        if ($request->has('img_avatar')) {
-            $avatar_photo = $request->file('img_avatar');
+        if ($request->has('avatar')) {
+            $avatar_photo = $request->file('avatar');
             $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
             if (!is_null($user->avatar_url)) {
                 $old_avatar_photo_path = 'avatars/' . basename($user->avatar_url);
@@ -147,30 +149,41 @@ class UserController extends Controller
     {
         $follower = Auth::user();
         if ($follower->id == $user->id) {
-            return response()->json(["errors" => ['message' => ["You can't follow yourself."]]], 422);
+            return response()->json(["errors" => ['message' => ["You can't follow yourself."]]], Response::HTTP_FORBIDDEN);
         }
         if (!$follower->isFollowing($user->id)) {
-            $newUser = $follower->follow($user->id);
+            $follower->follow($user->id);
 
             // sending a notification
-            // $user->notify(new UserFollowed($follower));
-            return response()->json(["success" => ['message' => ["You are now friends with {$user->name}"]]], 201);
+            // $user->notify(new UserFollowed($follower, $user));
+            event(new UserFollowed($follower, $user));
+            return response()->json(["success" => ['message' => ["You are now friends with {$user->name}"]]], Response::HTTP_OK);
         }
-        return response()->json(["errors" => ['message' => ["You are already following {$user->name}"]]], 422);
+        return response()->json(["success" => ['message' => ["You are already following {$user->name}"]]], Response::HTTP_ALREADY_REPORTED);
     }
 
     public function unfollow(User $user)
     {
-        $follower = auth()->user();
+        $follower = Auth::user();
         if ($follower->isFollowing($user->id)) {
             $follower->unfollow($user->id);
-            return response()->json(["success" => ['message' => ["You are no longer friends with {$user->name}"]]], 201);
+            return response()->json(["success" => ['message' => ["You are no longer friends with {$user->name}"]]], Response::HTTP_OK);
         }
-        return response()->json(["errors" => ['message' => ["You are not following {$user->name}"]]], 422);
+        return response()->json(["errors" => ['message' => ["You are not following {$user->name}"]]], Response::HTTP_FORBIDDEN);
     }
 
     public function notifications()
     {
         // return auth()->user()->unreadNotifications()->limit(5)->get()->toArray();
+    }
+
+    public function followers()
+    {
+        return Auth::user()->followers;
+    }
+
+    public function follows()
+    {
+        return Auth::user()->follows;
     }
 }

@@ -8,10 +8,13 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Models\Article;
 use App\Models\Comment;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     /**
      * Seed the application's database.
      */
@@ -36,7 +39,7 @@ class DatabaseSeeder extends Seeder
 
                 Comment::factory(rand(2, 5))->create([
                     'article_id' => $article->id,
-                    'author_id' => $users->random(1)[0]->id,
+                    'author_id' => $users->random(),
                 ]);
             });
         });
@@ -46,14 +49,16 @@ class DatabaseSeeder extends Seeder
                             ->set('password', 'password123')
                             ->has(Article::factory(4))
                             ->createOne();
-                            
+
         $defaultUser->articles()->each(function($article) use ($tags, $users) {
             $article->tags()->attach($tags->random(rand(1, 2)));
 
-            Comment::factory(rand(2, 5))->create([
-                'article_id' => $article->id,
-                'author_id' => $users->random(1)[0]->id,
-            ]);
+            Comment::factory()->count(3)->set('article_id', $article->id)->set('author_id', $users->random()->id);
+        });
+
+        $allUsers = User::all();
+        $allUsers->each(function($user) use ($allUsers) {
+            $user->follows()->attach($allUsers->toQuery()->where('id', '!=', $user->id)->get()->random(rand(1, 4)));
         });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Events\ArticleCreated;
 use Mockery;
 use App\Models\Tag;
 use Tests\TestCase;
@@ -11,6 +12,8 @@ use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use App\Interfaces\INotificationService;
+use App\Listeners\SendArticleCreatedNotifications;
+use Illuminate\Support\Facades\Event;
 
 class StoreArticleTest extends TestCase
 {
@@ -50,6 +53,56 @@ class StoreArticleTest extends TestCase
         );
         $articles = Article::all();
         $this->assertCount(1, $articles);
+    }
+
+    /**
+     * A basic feature test to check that events, listeners and notifications are fired on article creation.
+     */
+    public function test_events_listeners_and_notifications_are_fired_on_article_creation(): void
+    {
+        Event::fake();
+
+        $author = User::factory()->createOne();
+        $tag = Tag::factory()->set('author_id', $author->id)->createOne();
+        $tags = [$tag->name, 'colours', 'words'];
+        $title = 'foobar';
+        $slug = Str::slug($title);
+        $content = 'An interesting foobar story';
+
+        $response = $this->actingAs($author)->postJson(
+            route('articles.store'),
+            [
+                'title' => $title,
+                'slug' => $slug,
+                'content' => $content,
+                'tags' => $tags,
+            ]
+        );
+
+        $response->assertCreated()->assertJsonIsObject()->assertJsonStructure(
+            [
+                'id',
+                'title',
+                'slug',
+                'content',
+                'author_id',
+                'created_at',
+                'updated_at',
+                'author_id',
+            ]
+        );
+        $articles = Article::all();
+        $this->assertCount(1, $articles);
+
+        $article = Article::where('title', $title)->first();
+        Event::assertDispatched(function (ArticleCreated $event) use ($article) {
+            return $event->article->id === $article->id;
+        });
+
+        Event::assertListening(
+            ArticleCreated::class,
+            SendArticleCreatedNotifications::class
+        );
     }
 
     /**
