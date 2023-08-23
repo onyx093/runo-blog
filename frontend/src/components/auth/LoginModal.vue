@@ -17,7 +17,16 @@
         type="password"
         :required="false"
       />
-      <Button type="submit" :loading="isProcessing">Login</Button>
+      <div class="modal__button-wrapper">
+        <Button type="submit" :loading="isProcessing">Login</Button>
+        <span
+          v-if="count > 0"
+          class="modal__button--password"
+          :loading="isProcessing"
+          @click="handleReset"
+          >Forgot Password?</span
+        >
+      </div>
     </Form>
   </Modal>
 </template>
@@ -42,11 +51,19 @@ const form = ref({
   password: '',
 });
 
+const count = ref(0);
+
 const loginUser = async () => {
+  count.value += 1;
   const response = await User.login(form.value);
   localStorage.setItem('token', response.data.token);
   await userStore.loginUser();
   modalStore.closeModal();
   toast('Successfully logged in!');
+};
+
+const handleReset = () => {
+  modalStore.closeModal();
+  modalStore.openModal('resetPassword');
 };
 </script>

@@ -31,3 +31,21 @@
     cursor: pointer;
   }
 }
+
+.modal__button--wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__button--password {
+  display: block;
+  text-align: end;
+  font-size: 1rem;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: 0.8s;
+
+  &:hover {
+    color: $primaryColor;
+  }
+}

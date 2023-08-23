@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use App\Notifications\ResetPasswordNotification;
 
-class User extends Authenticatable
+class User extends Authenticatable implements CanResetPasswordContract
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, CanResetPassword;
 
     /**
      * The attributes that are mass assignable.
@@ -45,6 +48,18 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * Send a password reset notification to the user.
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $url = 'http://localhost:8080/reset-password?token=' . $token . '&email=' . $this->email;
+
+        $this->notify(new ResetPasswordNotification($url));
+    }
+
     public function tags(): HasMany
     {
         return $this->hasMany(Tag::class, 'author_id');
@@ -60,23 +75,24 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class, 'author_id');
     }
 
-    public function avatarUrl(): Attribute{
+    public function avatarUrl(): Attribute
+    {
         return Attribute::make(
-            get: fn(?string $avatarUrl) => $avatarUrl ? asset($avatarUrl) : null,
-            set: fn(string $avatarUrl) => $avatarUrl ? asset($avatarUrl) : null,
+            get: fn (?string $avatarUrl) => $avatarUrl ? asset($avatarUrl) : null,
+            set: fn (string $avatarUrl) => $avatarUrl ? asset($avatarUrl) : null,
         );
     }
 
     public function followers()
     {
         return $this->belongsToMany(self::class, 'followers', 'follows_id', 'user_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     public function follows()
     {
         return $this->belongsToMany(self::class, 'followers', 'user_id', 'follows_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     public function follow($userId)
@@ -93,6 +109,6 @@ class User extends Authenticatable
 
     public function isFollowing($userId)
     {
-        return (boolean) $this->follows()->where('follows_id', $userId)->first();
+        return (bool) $this->follows()->where('follows_id', $userId)->first();
     }
 }

@@ -72,6 +72,15 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
+    {
+      path: '/reset-password',
+      name: 'password.reset',
+      component: () => import('@/components/auth/NewPasswordModal.vue'),
+      props: (route) => ({
+        token: route.query.token,
+        email: route.query.email,
+      }),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     return {

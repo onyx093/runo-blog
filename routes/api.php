@@ -11,7 +11,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-use Laravel\Socialite\Facades\Socialite;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -57,22 +56,12 @@ Route::get('/articles/{article}/comments', [ArticleCommentController::class, 'sh
 Route::group(['middleware' => ['web']], function () {
     // your routes here
 
-    Route::get('/auth/redirect', function () {
-        return Socialite::driver('github')->redirect();
-    });
+    Route::get('/auth/redirect', [UserController::class, 'gitHubLogin']);
 
-    Route::get('/auth/callback', function () {
-        dd(Socialite::driver('github')->stateless());
-        $githubUser = Socialite::driver('github')->stateless()->user();
-
-        $user = User::updateOrCreate([
-            'email' => $githubUser->email,
-        ], [
-            'name' => $githubUser->name,
-        ]);
-
-        Auth::login($user);
-
-        return redirect('/');
-    });
+    Route::get('/auth/callback', [UserController::class, 'gitHubRedirect']);
 });
+
+Route::post('/forgot-password', [UserController::class, 'forgotPassword'])->middleware('guest')->name('password.email');
+
+Route::get('/reset-password/{token}', [UserController::class, 'resetPassword'])->middleware('guest')->name('password.reset');
+Route::post('/reset-password', [UserController::class, 'newPassword'])->middleware('guest')->name('password.update');

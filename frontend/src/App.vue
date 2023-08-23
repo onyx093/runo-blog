@@ -5,6 +5,7 @@ import Footer from '@/components/layouts/FooterComponent.vue';
 import Loader from '@/components/layouts/LoaderComponent.vue';
 import LoginModal from '@/components/auth/LoginModal.vue';
 import RegisterModal from '@/components/auth/RegisterModal.vue';
+import ResetPasswordModal from '@/components/auth/ResetPasswordModal.vue';
 import { useModalStore } from '@/stores/modal.js';
 import { useUxStore } from '@/stores/ux.js';
 
@@ -35,6 +36,7 @@ const route = useRoute();
   </RouterView>
   <LoginModal v-if="modalStore.modal === 'login'" />
   <RegisterModal v-if="modalStore.modal === 'register'" />
+  <ResetPasswordModal v-if="modalStore.modal === 'resetPassword'" />
   <Loader v-if="uxStore.isLoading" />
   <Footer />
 </template>

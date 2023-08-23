@@ -8,9 +8,16 @@ use App\Http\Requests\CheckUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateUserRequest;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
+
 
 class UserController extends Controller
 {
@@ -46,6 +53,32 @@ class UserController extends Controller
             $user->avatar_url = Storage::url($avatar_photo_path);
         }
         $user->save();
+
+        $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
+        return ['token' => $sanctumToken];
+    }
+
+    public function gitHubLogin()
+    {
+        return Socialite::driver('github')->redirect();
+    }
+
+    public function gitHubRedirect()
+    {
+        try {
+            $githubUser = Socialite::driver('github')->stateless()->user();
+        } catch (Exception $e) {
+            return Redirect::to('/api/auth/redirect');
+        }
+
+        dd($githubUser);
+
+        $user = User::updateOrCreate([
+            'email' => 'luis@newmail.com',
+        ], [
+            'name' => $githubUser->name,
+            'password' => bcrypt(Str::random(12))
+        ]);
 
         $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
         return ['token' => $sanctumToken];
@@ -172,5 +205,51 @@ class UserController extends Controller
     public function notifications()
     {
         // return auth()->user()->unreadNotifications()->limit(5)->get()->toArray();
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(['message' => 'Reset link sent to your email.']);
+        }
+        return response()->json(['error' => 'Failed to send reset link.'], 400);
+    }
+
+    public function resetPassword(string $token)
+    {
+        return ['token' => $token];
+    }
+
+    public function newPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => bcrypt($password)
+                ]);
+
+                $user->update();
+
+                //event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json(['message' => 'Password reset successfully.']);
+        }
+        return response()->json(['error' => 'Failed to reset password.'], 400);
     }
 }
