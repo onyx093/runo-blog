@@ -38,11 +38,11 @@ class NewArticleNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject("New Article from {$this->article->author->name}")
-                    ->greeting("A new article from {$this->article->author->name}")
-                    ->line(Str::limit($this->article->content, 50))
-                    ->action('Check out the article here', url("/article/{$this->article->id}"))
-                    ->line('Thank you for using our application!');
+            ->subject("New Article from {$this->article->author->name}")
+            ->greeting("A new article from {$this->article->author->name}")
+            ->line(Str::limit($this->article->content, 50))
+            ->action('Check out the article here', url("/article/{$this->article->id}"))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -53,11 +53,11 @@ class NewArticleNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'name' => $this->article->author->name,
+            'type' => 'article',
             'article_id' => $this->article->id,
             'title' => $this->article->title,
-            // 'avatar_photo' => $this->article->author->avatar_photo,
+            'content' => $this->article->author->name . " published a new article!",
+            'user_avatar' => $this->article->author->avatar_url,
         ];
     }
-
 }

@@ -108,4 +108,12 @@
 
 .header__dropdown-item--txt {
   font-family: $loraFont;
+  text-decoration: none;
+  font-size: 0.8rem;
+  color: black;
+  transition: 0.8s;
+
+  &:hover {
+    color: $primaryColor;
+  }
 }

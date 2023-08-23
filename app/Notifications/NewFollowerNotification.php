@@ -36,10 +36,10 @@ class NewFollowerNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject("You Have A New Follower!")
-                    ->greeting("{$this->follower->name} is now following you!")
-                    ->action('Check out their profile here', url("/users/{$this->follower->id}"))
-                    ->line('Thank you for using our application!');
+            ->subject("You Have A New Follower!")
+            ->greeting("{$this->follower->name} is now following you!")
+            ->action('Check out their profile here', url("/users/{$this->follower->id}"))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -50,8 +50,10 @@ class NewFollowerNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'follower' => $this->follower->name,
-            // 'avatar_photo' => $this->article->author->avatar_photo,
+            'type' => 'users',
+            'id' => $this->follower->id,
+            'content' => $this->follower->name . " is now following you",
+            'user_avatar' => $this->follower->avatar_url,
         ];
     }
 }

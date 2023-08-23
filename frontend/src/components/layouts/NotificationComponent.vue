@@ -1,22 +1,27 @@
 <script setup>
 import { useUserStore } from '@/stores/user.js';
 import { useNotificationStore } from '@/stores/notification.js';
+import { useErrorStore } from '@/stores/error.js';
 import { ref } from 'vue';
+import User from '@/requests/User.js';
+import handleError from '@/utils/handleError.js';
 
 const userStore = useUserStore();
 const notificationStore = useNotificationStore();
+const errorStore = useErrorStore();
 
 const isVisible = ref(false);
 
-const toggleNotifications = (e) => {
+const toggleNotifications = () => {
   isVisible.value = !isVisible.value;
   if (!isVisible.value) {
     notificationStore.clearNotifications();
   }
-  // try {
-  //   const response = UserService.markNotifications();
-  //   console.log(response.data);
-  // } catch (error) {}
+  try {
+    User.markNotifications();
+  } catch (error) {
+    handleError(error, errorStore);
+  }
 };
 </script>
 
@@ -55,12 +60,22 @@ const toggleNotifications = (e) => {
             <a class="header__dropdown-item">
               <img
                 class="header__dropdown-item--img"
-                :src="notification.user_avatar"
-                alt=""
+                :src="
+                  notification.user_avatar
+                    ? notification.user_avatar
+                    : 'https://picsum.photos/100/100'
+                "
+                alt="User avatar"
               />
-              <span class="header__dropdown-item--txt">{{
-                notification.content
-              }}</span>
+              <router-link
+                class="header__dropdown-item--txt"
+                :to="{
+                  name: `${notification.type}.show`,
+                  params: { id: notification.id },
+                }"
+              >
+                <span>{{ notification.content }}</span>
+              </router-link>
             </a>
             <span class="header_dropdown-item-divider"></span>
           </div>

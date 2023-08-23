@@ -1,8 +1,7 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import ProfileBoard from '@/components/profile/ProfileBoard.vue';
 import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
-import Article from '@/requests/Article.js';
 import { useUserStore } from '@/stores/user';
 import { useErrorStore } from '@/stores/error';
 import handleError from '@/utils/handleError.js';
@@ -20,57 +19,62 @@ const user = ref(null);
 
 const myArticles = ref([]);
 
-const visibleArticles = ref(false);
+const visibleArticles = ref(true);
 const visibleFollowers = ref(false);
 
-const followers = ref([
-  {
-    id: 1,
-    avatar_url: 'https://picsum.photos/100/100',
-    name: 'Name 1',
+const followers = ref([]);
+
+const nFollowers = computed(() => {
+  return followers.value.length;
+});
+
+const isFollowing = ref(false);
+
+watch(
+  () => followers.value,
+  () => {
+    followers.value.forEach((follower) => {
+      if (follower.id === userStore.user.id) {
+        isFollowing.value = true;
+      }
+    });
   },
-  {
-    id: 2,
-    avatar_url: 'https://picsum.photos/100/100',
-    name: 'Name 1',
-  },
-  {
-    id: 3,
-    avatar_url: 'https://picsum.photos/100/100',
-    name: 'Name 1',
-  },
-  {
-    id: 4,
-    avatar_url: 'https://picsum.photos/100/100',
-    name: 'Name 1',
-  },
-  {
-    id: 5,
-    avatar_url: 'https://picsum.photos/100/100',
-    name: 'Name 1',
-  },
-  {
-    id: 6,
-    avatar_url: 'https://picsum.photos/100/100',
-    name: 'Name 1',
-  },
-]);
+  { deep: true }
+);
 
 try {
   const response = await User.show(route.params.id);
   user.value = response.data;
   myArticles.value = user.value.articles;
-  console.log(user.value);
+  followers.value = user.value.followers;
+  console.log(followers.value);
 } catch (error) {
   handleError(error);
 }
 
-const handleClick = () => {
-  try {
-    const response = User.follow(route.params.id);
-    console.log(response.data);
-  } catch (error) {
-    handleError(error, errorStore);
+const handleClick = async () => {
+  if (isFollowing.value) {
+    try {
+      await User.unfollow(route.params.id);
+      isFollowing.value = false;
+      const followerIndex = followers.value.findIndex(
+        (follower) => follower.id == userStore.user.id
+      );
+      if (followerIndex > -1) {
+        followers.value.splice(followerIndex, 1);
+      }
+    } catch (error) {
+      handleError(error, errorStore);
+    }
+  } else {
+    try {
+      await User.follow(route.params.id);
+      followers.value.push(userStore.user);
+      isFollowing.value = true;
+      console.log(followers.value);
+    } catch (error) {
+      handleError(error, errorStore);
+    }
   }
 };
 
@@ -87,8 +91,14 @@ const showFollowers = () => {
 <template>
   <main>
     <ProfileBoard :user="user" :owner="false" :showProfileInfo="true">
-      <ButtonComponent @btn-click="handleClick">Follow</ButtonComponent>
-      <ButtonComponent>Unfollow</ButtonComponent>
+      <div class="section__button-wrapper">
+        <ButtonComponent
+          v-if="userStore.isLoggedIn"
+          class="section__button-follow"
+          @btn-click="handleClick()"
+          >{{ isFollowing ? 'Unfollow' : 'Follow' }}</ButtonComponent
+        >
+      </div>
     </ProfileBoard>
 
     <section class="section">
@@ -97,7 +107,7 @@ const showFollowers = () => {
           {{ user.articles.length + ' articles' }}
         </div>
         <div class="section__info-item" @click="showFollowers">
-          {{ followers?.length ?? '0' }}
+          {{ nFollowers }}
           <span> followers</span>
         </div>
       </div>
@@ -126,8 +136,15 @@ const showFollowers = () => {
               :key="follower.id"
             >
               <img
+                v-if="follower.avatar_url"
                 class="section__followers-item--img"
                 :src="follower.avatar_url"
+                alt=""
+              />
+              <img
+                v-else
+                class="section__followers-item--img"
+                src="https://picsum.photos/100/100"
                 alt=""
               />
               <span class="section__followers-item--name">{{

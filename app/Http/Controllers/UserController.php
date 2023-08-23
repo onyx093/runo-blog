@@ -58,7 +58,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $user->load('articles.tags', 'comments');
+        return $user->load('articles.tags', 'comments', 'followers', 'follows');
     }
 
     /**
@@ -147,34 +147,39 @@ class UserController extends Controller
 
     public function follow(User $user)
     {
-        $follower = Auth::user();
-        if ($follower->id == $user->id) {
+        $authUser = Auth::user();
+        if ($authUser->id == $user->id) {
             return response()->json(["errors" => ['message' => ["You can't follow yourself."]]], Response::HTTP_FORBIDDEN);
         }
-        if (!$follower->isFollowing($user->id)) {
-            $follower->follow($user->id);
+        if (!$authUser->isFollowing($user->id)) {
+            $authUser->follow($user->id);
 
-            // sending a notification
-            // $user->notify(new UserFollowed($follower, $user));
-            event(new UserFollowed($follower, $user));
+            event(new UserFollowed($authUser, $user));
             return response()->json(["success" => ['message' => ["You are now friends with {$user->name}"]]], Response::HTTP_OK);
         }
-        return response()->json(["success" => ['message' => ["You are already following {$user->name}"]]], Response::HTTP_ALREADY_REPORTED);
+        return response()->json(["errors" => ['message' => ["You are already following {$user->name}"]]], Response::HTTP_ALREADY_REPORTED);
     }
 
     public function unfollow(User $user)
     {
-        $follower = Auth::user();
-        if ($follower->isFollowing($user->id)) {
-            $follower->unfollow($user->id);
+        $authUser = Auth::user();
+        if ($authUser->isFollowing($user->id)) {
+            $authUser->unfollow($user->id);
             return response()->json(["success" => ['message' => ["You are no longer friends with {$user->name}"]]], Response::HTTP_OK);
         }
         return response()->json(["errors" => ['message' => ["You are not following {$user->name}"]]], Response::HTTP_FORBIDDEN);
     }
 
-    public function notifications()
+    public function getNotifications(Request $request)
     {
-        // return auth()->user()->unreadNotifications()->limit(5)->get()->toArray();
+        return $request->user()->unreadNotifications;
+    }
+
+    public function markNotifications(Request $request)
+    {
+        $request->user()->unreadNotifications->markAsRead();
+
+        return response()->noContent();
     }
 
     public function followers()

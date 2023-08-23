@@ -7,10 +7,15 @@
       "
       alt=""
     />
-    <div class="article__author-content">
-      <h4 class="article__authorHeading">By {{ author.name }}</h4>
-      <p class="article__authorRole">{{ author.email }}</p>
-    </div>
+    <router-link
+      class="article__author-link"
+      :to="{ name: 'users.show', params: { id: author.id } }"
+    >
+      <div class="article__author-content">
+        <h4 class="article__authorHeading">By {{ author.name }}</h4>
+        <p class="article__authorRole">{{ author.email }}</p>
+      </div>
+    </router-link>
   </div>
 </template>
 

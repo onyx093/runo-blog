@@ -28,7 +28,7 @@ Route::get('/logout', [UserController::class, 'logout'])->middleware('auth:sanct
 $guestRoutes = ['index', 'show'];
 
 // Authenticated routes
-Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
+Route::middleware('auth:sanctum')->group(function () use ($guestRoutes) {
     Route::apiResource('/articles', ArticleController::class)->except($guestRoutes);
     Route::apiResource('/comments', CommentController::class)->except($guestRoutes);
     Route::apiResource('/tags', TagController::class)->except($guestRoutes);
@@ -44,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function() use ($guestRoutes) {
     Route::get('/my', [UserController::class, 'my']);
     Route::post('/my/upload-avatar', [UserController::class, 'uploadAvatar'])->name('users.upload-avatar');
 
+    Route::get('/notifications', [UserController::class, 'getNotifications']);
+    Route::post('/notifications', [UserController::class, 'markNotifications']);
 });
 
 // Guest routes
