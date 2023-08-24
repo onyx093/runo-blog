@@ -53,6 +53,7 @@ try {
 }
 
 const handleClick = async () => {
+  isLoading.value = true;
   if (isFollowing.value) {
     try {
       await User.unfollow(route.params.id);
@@ -65,6 +66,8 @@ const handleClick = async () => {
       }
     } catch (error) {
       handleError(error, errorStore);
+    } finally {
+      isLoading.value = false;
     }
   } else {
     try {
@@ -74,6 +77,8 @@ const handleClick = async () => {
       console.log(followers.value);
     } catch (error) {
       handleError(error, errorStore);
+    } finally {
+      isLoading.value = false;
     }
   }
 };
@@ -87,12 +92,15 @@ const showFollowers = () => {
   visibleArticles.value = false;
   visibleFollowers.value = !visibleFollowers.value;
 };
+
+const isLoading = ref(false);
 </script>
 <template>
   <main>
     <ProfileBoard :user="user" :owner="false" :showProfileInfo="true">
       <div class="section__button-wrapper">
         <ButtonComponent
+          :loading="isLoading"
           v-if="userStore.isLoggedIn"
           class="section__button-follow"
           @btn-click="handleClick()"
