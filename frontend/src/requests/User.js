@@ -28,6 +28,9 @@ export default {
   async following() {
     return await Http.get(`/users/my-follows`);
   },
+  async followers() {
+    return await Http.get(`/users/my-followers`);
+  },
 
   async getNotifications() {
     return await Http.get(`/notifications`);

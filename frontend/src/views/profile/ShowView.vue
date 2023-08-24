@@ -22,11 +22,17 @@ const myArticles = ref([]);
 
 const visibleArticles = ref(true);
 const visibleFollowers = ref(false);
+const visibleFollows = ref(false);
 
 const followers = ref([]);
+const follows = ref([]);
 
 const nFollowers = computed(() => {
   return followers.value.length;
+});
+
+const nFollows = computed(() => {
+  return follows.value.length;
 });
 
 const isFollowing = ref(false);
@@ -48,6 +54,7 @@ try {
   user.value = response.data;
   myArticles.value = user.value.articles;
   followers.value = user.value.followers;
+  follows.value = user.value.follows;
   console.log(followers.value);
 } catch (error) {
   handleError(error);
@@ -88,10 +95,17 @@ const handleClick = async () => {
 const showArticles = () => {
   visibleArticles.value = !visibleArticles.value;
   visibleFollowers.value = false;
+  visibleFollows.value = false;
 };
 
+const showFollowing = () => {
+  visibleArticles.value = false;
+  visibleFollowers.value = false;
+  visibleFollows.value = !visibleFollows.value;
+};
 const showFollowers = () => {
   visibleArticles.value = false;
+  visibleFollows.value = false;
   visibleFollowers.value = !visibleFollowers.value;
 };
 
@@ -119,6 +133,10 @@ const isLoading = ref(false);
         <div class="section__info-item" @click="showFollowers">
           {{ nFollowers }}
           <span> followers</span>
+        </div>
+        <div class="section__info-item" @click="showFollowing">
+          {{ nFollows }}
+          <span> following</span>
         </div>
       </div>
       <div class="section__inner">
@@ -158,6 +176,33 @@ const isLoading = ref(false);
               />
               <span class="section__followers-item--name">{{
                 follower.name
+              }}</span>
+            </router-link>
+          </ul>
+        </div>
+        <div v-if="visibleFollows" class="section__inner-followers">
+          <h2 class="section__heading">Following</h2>
+          <ul class="section__followers-container">
+            <router-link
+              :to="{ name: 'users.show', params: { id: follow.id } }"
+              class="section__followers-item"
+              v-for="follow in follows"
+              :key="follow.id"
+            >
+              <img
+                v-if="follow.avatar_url"
+                class="section__followers-item--img"
+                :src="follow.avatar_url"
+                alt=""
+              />
+              <img
+                v-else
+                class="section__followers-item--img"
+                src="https://picsum.photos/100/100"
+                alt=""
+              />
+              <span class="section__followers-item--name">{{
+                follow.name
               }}</span>
             </router-link>
           </ul>

@@ -160,7 +160,7 @@ class UserController extends Controller
         if (!$authUser->isFollowing($user->id)) {
             $authUser->follow($user->id);
 
-            event(new UserFollowed($user, $authUser));
+            event(new UserFollowed($authUser, $user));
             return response()->json(['message' => ["You are now friends with {$user->name}"]], Response::HTTP_OK);
         }
         return response()->json(["errors" => ["You are already following {$user->name}"]], Response::HTTP_ALREADY_REPORTED);
@@ -251,7 +251,7 @@ class UserController extends Controller
             return $validated;
         }
 
-        return Socialite::driver($provider)->redirect();
+        return Socialite::driver($provider)->redirect()->getTargetUrl();
     }
 
     public function handleProviderCallback(string $provider)
