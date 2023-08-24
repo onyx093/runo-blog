@@ -8,8 +8,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
 
-class SendUserFollowedNotifications
+class SendUserFollowedNotifications implements ShouldQueue
 {
+
+    use InteractsWithQueue;
+
     /**
      * Create the event listener.
      */

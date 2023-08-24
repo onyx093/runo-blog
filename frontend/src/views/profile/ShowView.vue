@@ -122,7 +122,6 @@ const showFollowers = () => {
               :img-width="420"
               :img-height="350"
               :floating-text="true"
-              :editable="true"
             />
           </div>
         </div>

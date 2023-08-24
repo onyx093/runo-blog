@@ -15,7 +15,7 @@ export const useNotificationStore = defineStore('notification', () => {
       response.data.forEach((notification) => {
         userNotifications.value.push(notification.data);
       });
-      console.log(response.data);
+      //   console.log(response.data);
     } catch (error) {
       userNotifications.value = undefined;
     }
