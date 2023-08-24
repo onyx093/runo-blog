@@ -70,14 +70,62 @@
   justify-content: space-around;
   max-width: 500px;
   width: 100%;
-  margin: 0 auto;
-  padding: 30px;
-  border-top: 2px solid #d4a373;
-  border-bottom: 2px solid #d4a373;
+  margin: 0 auto 25px;
+  padding: 20px;
+  border-top: 1px solid #d4a373;
+  border-bottom: 1px solid #d4a373;
 }
 
 .section__info-item {
   cursor: pointer;
   font-weight: 700;
   font-size: 1.5rem;
+  font-family: $loraFont;
+}
+
+.section__followers-container {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.section__followers-item {
+  display: flex;
+  align-items: center;
+  column-gap: 50px;
+  margin: 20px;
+  text-decoration: none;
+  padding: 10px;
+  transition: 0.7s;
+  border-radius: 5px;
+
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 6px;
+  }
+}
+
+.section__followers-item--img {
+  border-radius: 50%;
+  max-width: 100px;
+  max-height: auto;
+}
+
+.section__followers-item--name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: black;
+  transition: 0.8s;
+  font-family: $loraFont;
+
+  &:hover {
+    color: $primaryColor;
+  }
+}
+
+.section__button-wrapper {
+  width: max-content;
+}
+
+.section__button-follow {
+  margin-top: 30px;
 }

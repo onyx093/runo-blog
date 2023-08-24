@@ -52,9 +52,11 @@ import { toast } from 'vue3-toastify';
 import Form from '@/components/general/FormComponent.vue';
 import { useUserStore } from '@/stores/user.js';
 import { useModalStore } from '@/stores/modal.js';
+import { useNotificationStore } from '../../stores/notification';
 
 const userStore = useUserStore();
 const modalStore = useModalStore();
+const notificationStore = useNotificationStore();
 
 const isProcessing = ref(false);
 const form = ref({
@@ -69,6 +71,7 @@ const loginUser = async () => {
   const response = await User.login(form.value);
   localStorage.setItem('token', response.data.token);
   await userStore.loginUser();
+  await notificationStore.getNotifications();
   modalStore.closeModal();
   toast('Successfully logged in!');
 };

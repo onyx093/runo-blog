@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserFollowed;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\CheckUserRequest;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateUserRequest;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Redirect;
@@ -62,7 +64,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $user->load('articles.tags', 'comments');
+        return $user->load('articles.tags', 'comments', 'followers', 'follows');
     }
 
     /**
@@ -72,8 +74,8 @@ class UserController extends Controller
     {
         $user->name = $request->input('name');
 
-        if ($request->has('img_avatar')) {
-            $avatar_photo = $request->file('img_avatar');
+        if ($request->has('avatar')) {
+            $avatar_photo = $request->file('avatar');
             $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
             if (!is_null($user->avatar_url)) {
                 $old_avatar_photo_path = 'avatars/' . basename($user->avatar_url);
@@ -151,33 +153,49 @@ class UserController extends Controller
 
     public function follow(User $user)
     {
-        $follower = Auth::user();
-        if ($follower->id == $user->id) {
-            return response()->json(["errors" => ['message' => ["You can't follow yourself."]]], 422);
+        $authUser = Auth::user();
+        if ($authUser->id == $user->id) {
+            return response()->json(["errors" => ['message' => ["You can't follow yourself."]]], Response::HTTP_FORBIDDEN);
         }
-        if (!$follower->isFollowing($user->id)) {
-            $newUser = $follower->follow($user->id);
+        if (!$authUser->isFollowing($user->id)) {
+            $authUser->follow($user->id);
 
-            // sending a notification
-            // $user->notify(new UserFollowed($follower));
-            return response()->json(["success" => ['message' => ["You are now friends with {$user->name}"]]], 201);
+            event(new UserFollowed($authUser, $user));
+            return response()->json(["success" => ['message' => ["You are now friends with {$user->name}"]]], Response::HTTP_OK);
         }
-        return response()->json(["errors" => ['message' => ["You are already following {$user->name}"]]], 422);
+        return response()->json(["errors" => ['message' => ["You are already following {$user->name}"]]], Response::HTTP_ALREADY_REPORTED);
     }
 
     public function unfollow(User $user)
     {
-        $follower = auth()->user();
-        if ($follower->isFollowing($user->id)) {
-            $follower->unfollow($user->id);
-            return response()->json(["success" => ['message' => ["You are no longer friends with {$user->name}"]]], 201);
+        $authUser = Auth::user();
+        if ($authUser->isFollowing($user->id)) {
+            $authUser->unfollow($user->id);
+            return response()->json(["success" => ['message' => ["You are no longer friends with {$user->name}"]]], Response::HTTP_OK);
         }
-        return response()->json(["errors" => ['message' => ["You are not following {$user->name}"]]], 422);
+        return response()->json(["errors" => ['message' => ["You are not following {$user->name}"]]], Response::HTTP_FORBIDDEN);
     }
 
-    public function notifications()
+    public function getNotifications(Request $request)
     {
-        // return auth()->user()->unreadNotifications()->limit(5)->get()->toArray();
+        return $request->user()->unreadNotifications;
+    }
+
+    public function markNotifications(Request $request)
+    {
+        $request->user()->unreadNotifications->markAsRead();
+
+        return response()->noContent();
+    }
+
+    public function followers()
+    {
+        return Auth::user()->followers;
+    }
+
+    public function follows()
+    {
+        return Auth::user()->follows;
     }
 
     public function forgotPassword(Request $request)

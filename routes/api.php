@@ -38,11 +38,16 @@ Route::middleware('auth:sanctum')->group(function () use ($guestRoutes) {
 
     Route::post('/users/{user}/follow', [UserController::class, 'follow'])->name('user.follow');
     Route::post('/users/{user}/unfollow', [UserController::class, 'unfollow'])->name('user.unfollow');
+    Route::get('/users/my-followers', [UserController::class, 'followers'])->name('user.followers');
+    Route::get('/users/my-follows', [UserController::class, 'follows'])->name('user.follows');
 
     Route::post('/articles/{article}/comments', [ArticleCommentController::class, 'store'])->name('articles.comments.store');
 
     Route::get('/my', [UserController::class, 'my']);
     Route::post('/my/upload-avatar', [UserController::class, 'uploadAvatar'])->name('users.upload-avatar');
+
+    Route::get('/notifications', [UserController::class, 'getNotifications']);
+    Route::post('/notifications', [UserController::class, 'markNotifications']);
 });
 
 // Guest routes
