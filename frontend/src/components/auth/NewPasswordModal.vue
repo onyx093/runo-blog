@@ -30,6 +30,9 @@ import Button from '@/components/general/ButtonComponent.vue';
 import { toast } from 'vue3-toastify';
 import Form from '@/components/general/FormComponent.vue';
 import Password from '@/requests/Password.js';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const props = defineProps({
   token: {
@@ -54,5 +57,6 @@ const form = ref({
 const newPassword = async () => {
   const response = await Password.newPassword(form.value);
   toast(response.data.message);
+  router.push({ name:  'home'});
 };
 </script>
