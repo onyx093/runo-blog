@@ -85,14 +85,12 @@ class User extends Authenticatable implements CanResetPasswordContract
 
     public function followers()
     {
-        return $this->belongsToMany(self::class, 'followers', 'follows_id', 'user_id')
-            ->withTimestamps();
+        return $this->belongsToMany(self::class, 'followers', 'user_id', 'follows_id');
     }
 
     public function follows()
     {
-        return $this->belongsToMany(self::class, 'followers', 'user_id', 'follows_id')
-            ->withTimestamps();
+        return $this->belongsToMany(self::class, 'followers', 'follows_id', 'user_id');
     }
 
     public function follow($userId)
@@ -109,6 +107,6 @@ class User extends Authenticatable implements CanResetPasswordContract
 
     public function isFollowing($userId)
     {
-        return (bool) $this->follows()->where('follows_id', $userId)->first();
+        return (bool) $this->follows()->where('user_id', $userId)->first();
     }
 }

@@ -20,14 +20,11 @@ import Modal from '@/components/general/ModalComponent.vue';
 import { ref } from 'vue';
 import Input from '@/components/general/InputComponent.vue';
 import Button from '@/components/general/ButtonComponent.vue';
-import User from '@/requests/User.js';
 import { toast } from 'vue3-toastify';
 import Form from '@/components/general/FormComponent.vue';
-import { useUserStore } from '@/stores/user.js';
 import { useModalStore } from '@/stores/modal.js';
 import Password from '@/requests/Password.js';
 
-const userStore = useUserStore();
 const modalStore = useModalStore();
 
 const isProcessing = ref(false);

@@ -25,6 +25,10 @@ export default {
   async unfollow(id) {
     return await Http.post(`/users/${id}/unfollow`);
   },
+  async following() {
+    return await Http.get(`/users/my-follows`);
+  },
+
   async getNotifications() {
     return await Http.get(`/notifications`);
   },
