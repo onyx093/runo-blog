@@ -11,7 +11,6 @@ use App\Http\Requests\UpdateUserRequest;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
@@ -53,32 +52,6 @@ class UserController extends Controller
             $user->avatar_url = Storage::url($avatar_photo_path);
         }
         $user->save();
-
-        $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
-        return ['token' => $sanctumToken];
-    }
-
-    public function gitHubLogin()
-    {
-        return Socialite::driver('github')->redirect();
-    }
-
-    public function gitHubRedirect()
-    {
-        try {
-            $githubUser = Socialite::driver('github')->stateless()->user();
-        } catch (Exception $e) {
-            return Redirect::to('/api/auth/redirect');
-        }
-
-        dd($githubUser);
-
-        $user = User::updateOrCreate([
-            'email' => 'luis@newmail.com',
-        ], [
-            'name' => $githubUser->name,
-            'password' => bcrypt(Str::random(12))
-        ]);
 
         $sanctumToken = $user->createToken('my sanctum blog token')->plainTextToken;
         return ['token' => $sanctumToken];
@@ -251,5 +224,46 @@ class UserController extends Controller
             return response()->json(['message' => 'Password reset successfully.']);
         }
         return response()->json(['error' => 'Failed to reset password.'], 400);
+    }
+
+    public function redirectToProvider(string $provider)
+    {
+        $validated = $this->validateProvider($provider);
+        if (!is_null($validated)) {
+            return $validated;
+        }
+
+        return Socialite::driver($provider)->redirect();
+    }
+
+    public function handleProviderCallback(string $provider)
+    {
+        $validated = $this->validateProvider($provider);
+        if (!is_null($validated)) {
+            return $validated;
+        }
+
+        try {
+            $user = Socialite::driver($provider)->stateless()->user();
+        } catch (Exception $e) {
+            return Redirect::to("/api/login/$provider");
+        }
+
+        $newUser = User::updateOrCreate([
+            'email' => "$provider@email.com",
+        ], [
+            'name' => $user->getName(),
+            'password' => bcrypt(Str::random(12))
+        ]);
+
+        $sanctumToken = $newUser->createToken('my sanctum blog token')->plainTextToken;
+        return ['token' => $sanctumToken];
+    }
+
+    private function validateProvider(string $provider)
+    {
+        if (!in_array($provider, ['github', 'facebook', 'google'])) {
+            return response()->json(['error' => 'Please login using github, facebook or google'], 422);
+        }
     }
 }

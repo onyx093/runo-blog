@@ -49,3 +49,27 @@
     color: $primaryColor;
   }
 }
+
+.modal__oauth {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal__oauth-txt {
+  display: block;
+  margin: 10px auto;
+  color: #818181;
+  font-size: 1rem;
+}
+
+.modal__oauth-providers {
+  display: flex;
+  justify-content: center;
+}
+
+.modal__oauth-github {
+  width: 30px;
+  height: auto;
+  cursor: pointer;
+}

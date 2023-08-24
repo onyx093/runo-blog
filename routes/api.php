@@ -54,11 +54,8 @@ Route::apiResource('/users', UserController::class)->only($guestRoutes);
 Route::get('/articles/{article}/comments', [ArticleCommentController::class, 'show'])->name('articles.comments.show');
 
 Route::group(['middleware' => ['web']], function () {
-    // your routes here
-
-    Route::get('/auth/redirect', [UserController::class, 'gitHubLogin']);
-
-    Route::get('/auth/callback', [UserController::class, 'gitHubRedirect']);
+    Route::get('/login/{provider}', [UserController::class, 'redirectToProvider']);
+    Route::get('/login/{provider}/callback', [UserController::class, 'handleProviderCallback']);
 });
 
 Route::post('/forgot-password', [UserController::class, 'forgotPassword'])->middleware('guest')->name('password.email');

@@ -25,4 +25,7 @@ export default {
   async unfollow(id) {
     return await Http.post(`/users/${id}/unfollow`);
   },
+  async github() {
+    return await Http.get(`/login/github`);
+  },
 };

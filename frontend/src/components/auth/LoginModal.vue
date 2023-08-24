@@ -28,6 +28,17 @@
         >
       </div>
     </Form>
+    <div class="modal__oauth">
+      <span class="modal__oauth-txt">or login with</span>
+      <div class="modal__oauth-providers">
+        <img
+          class="modal__oauth-github"
+          src="/images/github_logo.png"
+          alt=""
+          @click="loginGithub"
+        />
+      </div>
+    </div>
   </Modal>
 </template>
 
@@ -65,5 +76,18 @@ const loginUser = async () => {
 const handleReset = () => {
   modalStore.closeModal();
   modalStore.openModal('resetPassword');
+};
+
+const loginGithub = async () => {
+  try {
+    const response = await User.github();
+    console.log(response);
+    localStorage.setItem('token', response.data.token);
+    await userStore.loginUser();
+    modalStore.closeModal();
+    toast('Successfully logged in!');
+  } catch (error) {
+    console.log(error);
+  }
 };
 </script>
