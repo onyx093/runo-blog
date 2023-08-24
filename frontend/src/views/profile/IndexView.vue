@@ -126,7 +126,7 @@ const showFollowing = () => {
           </div>
         </div>
         <div v-if="visibleFollowers" class="section__inner-followers">
-          <h2 class="section__heading">Followers</h2>
+          <h2 class="section__heading">Following</h2>
           <ul class="section__followers-container">
             <router-link
               :to="{ name: 'users.show', params: { id: follower.id } }"

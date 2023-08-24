@@ -8,6 +8,7 @@ import handleError from '@/utils/handleError.js';
 import { useRoute } from 'vue-router';
 import User from '@/requests/User.js';
 import ButtonComponent from '@/components/general/ButtonComponent.vue';
+import { toast } from 'vue3-toastify';
 
 const userStore = useUserStore();
 
@@ -56,7 +57,7 @@ const handleClick = async () => {
   isLoading.value = true;
   if (isFollowing.value) {
     try {
-      await User.unfollow(route.params.id);
+      const response = await User.unfollow(route.params.id);
       isFollowing.value = false;
       const followerIndex = followers.value.findIndex(
         (follower) => follower.id == userStore.user.id
@@ -64,6 +65,7 @@ const handleClick = async () => {
       if (followerIndex > -1) {
         followers.value.splice(followerIndex, 1);
       }
+      toast(response.data.message);
     } catch (error) {
       handleError(error, errorStore);
     } finally {
@@ -71,10 +73,10 @@ const handleClick = async () => {
     }
   } else {
     try {
-      await User.follow(route.params.id);
+      const response = await User.follow(route.params.id);
       followers.value.push(userStore.user);
       isFollowing.value = true;
-      console.log(followers.value);
+      toast(response.data.message);
     } catch (error) {
       handleError(error, errorStore);
     } finally {
