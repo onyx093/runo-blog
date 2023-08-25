@@ -144,7 +144,7 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
                       v-model:content="form.content"
                       theme="snow"
                       placeholder="Add content"
-                      content-type="delta"
+                      content-type="text"
                     />
                   </div>
                 </div>

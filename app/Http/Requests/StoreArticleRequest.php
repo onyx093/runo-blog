@@ -27,7 +27,7 @@ class StoreArticleRequest extends FormRequest
             'slug' => ['required', 'string'],
             'content' => ['required', 'string'],
             'tags' => ['sometimes', 'array'],
-            'cover_photo' => ['sometimes', File::image()],
+            'cover_photo' => ['nullable', File::image()],
         ];
     }
 }
