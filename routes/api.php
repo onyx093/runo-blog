@@ -67,3 +67,5 @@ Route::post('/forgot-password', [UserController::class, 'forgotPassword'])->midd
 
 Route::get('/reset-password/{token}', [UserController::class, 'resetPassword'])->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [UserController::class, 'newPassword'])->middleware('guest')->name('password.update');
+
+Route::get('authenticate/github', [UserController::class, 'loginWithGithub']);

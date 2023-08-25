@@ -81,10 +81,10 @@ const handleReset = () => {
   modalStore.openModal('resetPassword');
 };
 
+// Presentation only
 const loginGithub = async () => {
   try {
-    const response = await User.github();
-    console.log(response);
+    const response = await User.githubAuth();
     localStorage.setItem('token', response.data.token);
     await userStore.loginUser();
     modalStore.closeModal();

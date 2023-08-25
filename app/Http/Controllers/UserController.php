@@ -284,4 +284,22 @@ class UserController extends Controller
             return response()->json(['error' => 'Please login using github, facebook or google'], 422);
         }
     }
+
+    public function loginWithGithub()
+    {
+        $user = [
+            'email' => 'username@github.com',
+            'name' => 'Github User'
+        ];
+
+        $newUser = User::updateOrCreate([
+            'email' => "github@email.com",
+        ], [
+            'name' => $user['name'],
+            'password' => bcrypt(Str::random(12))
+        ]);
+
+        $sanctumToken = $newUser->createToken('my sanctum blog token')->plainTextToken;
+        return ['token' => $sanctumToken];
+    }
 }
