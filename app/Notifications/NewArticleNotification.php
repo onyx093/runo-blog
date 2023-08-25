@@ -41,7 +41,7 @@ class NewArticleNotification extends Notification
             ->subject("New Article from {$this->article->author->name}")
             ->greeting("A new article from {$this->article->author->name}")
             ->line(Str::limit($this->article->content, 50))
-            ->action('Check out the article here', url("/article/{$this->article->id}"))
+            ->action('Check out the article here', url("http://localhost:8080/article/{$this->article->id}"))
             ->line('Thank you for using our application!');
     }
 

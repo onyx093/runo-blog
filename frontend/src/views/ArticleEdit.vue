@@ -83,7 +83,7 @@ const updateArticle = async () => {
 };
 
 const cropSuccess = (imgDataUrl) => {
-  const newImage = new File();
+//   const newImage = new File();
   form.value.cover_photo = imgDataUrl;
   articleCoverImage.value = imgDataUrl;
 };
@@ -139,7 +139,7 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
                     :readonly="true"
                   />
                   <div class="input__group">
-                    <label class="input__label">Tags</label>
+                    <label class="input__label">Content</label>
                     <QuillEditor
                       v-model:content="form.content"
                       theme="snow"

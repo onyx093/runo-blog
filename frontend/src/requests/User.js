@@ -10,6 +10,9 @@ export default {
   async edit(userId, params) {
     return await Http.put(`/users/${userId}`, params);
   },
+  async changePassword(userId, params) {
+    return await Http.put(`/users/${userId}/change-password`, params);
+  },
   async my() {
     return await Http.get(`/my`);
   },

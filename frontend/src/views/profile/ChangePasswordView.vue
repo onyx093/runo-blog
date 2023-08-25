@@ -17,16 +17,21 @@ const user = computed(() => userStore.user);
 
 const isProcessing = ref(false);
 const form = ref({
-  name: user.value.name,
-  email: user.value.email,
+  oldPassword: '',
+  newPassword: '',
+  newPassword_confirmation: '',
 });
 
-const editProfile = async () => {
+const changePassword = async () => {
   try {
-    const response = await User.edit(user.value.id, form.value);
+    const response = await User.changePassword(user.value.id, form.value);
     userStore.setUser(response.data);
-    toast.success('User profile updated!');
+    toast.success('User password changed!');
+    form.value.oldPassword = '';
+    form.value.newPassword = '';
+    form.value.newPassword_confirmation = '';
   } catch (error) {
+    console.log(error);
     handleError(error, errorStore);
   }
 };
@@ -50,29 +55,35 @@ const editProfile = async () => {
         <section class="section">
           <div class="section__inner">
             <h2 class="section__heading section__heading--centered">
-              Edit profile
+              Change password
             </h2>
 
             <Form
               v-model:is-processing="isProcessing"
-              :handle-logic="editProfile"
+              :handle-logic="changePassword"
             >
               <Input
-                v-model:value="form.name"
-                for-key="name"
-                label="Name"
-                type="text"
+                v-model:value="form.oldPassword"
+                for-key="oldPassword"
+                label="Old Password"
+                type="password"
                 :required="false"
               />
               <Input
-                v-model:value="form.email"
-                for-key="email"
-                label="Email"
-                type="email"
-                :required="true"
-                :readonly="true"
+                v-model:value="form.newPassword"
+                for-key="newPassword"
+                label="New Password"
+                type="password"
+                :required="false"
               />
-              <Button type="submit" :loading="isProcessing">Update</Button>
+              <Input
+                v-model:value="form.newPassword_confirmation"
+                for-key="newPassword_confirmation"
+                label="Confirm Password"
+                type="password"
+                :required="false"
+              />
+              <Button type="submit" :loading="isProcessing">Change password</Button>
             </Form>
           </div>
         </section>

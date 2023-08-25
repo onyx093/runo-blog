@@ -40,7 +40,7 @@ class NewCommentNotification extends Notification
             ->subject("New comment from {$this->comment->author->name}")
             ->greeting("{$this->comment->author->name} commented on the article, {$this->comment->article->title}")
             ->line(Str::limit($this->comment->content, 50))
-            ->action('Click here to view whole article', url("/article/{$this->comment->article->id}"))
+            ->action('Click here to view whole article', url("http://localhost:8080/article/{$this->comment->article->id}"))
             ->line('Thank you for using our application!');
     }
 

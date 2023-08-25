@@ -38,7 +38,7 @@ class NewFollowerNotification extends Notification
         return (new MailMessage)
             ->subject("You Have A New Follower!")
             ->greeting("{$this->follower->name} is now following you!")
-            ->action('Check out their profile here', url("/users/{$this->follower->id}"))
+            ->action('Check out their profile here', url("http://localhost:8080/users/{$this->follower->id}"))
             ->line('Thank you for using our application!');
     }
 

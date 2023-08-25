@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserFollowed;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\CheckUserRequest;
@@ -84,6 +85,32 @@ class UserController extends Controller
             $user->avatar_url = Storage::url($avatar_photo_path);
         }
         $user->save();
+
+        return $user;
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function changePassword(ChangePasswordRequest $request, User $user)
+    {
+        if(!Hash::check($request->input('oldPassword'), $user->password)){
+            return response()->json(["errors" => ["oldPassword" => ["Current password is incorrect"]]], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $user->password = $request->input('newPassword');
+        $user->save();
+        /* $user->name = $request->input('name');
+
+        if ($request->has('avatar')) {
+            $avatar_photo = $request->file('avatar');
+            $avatar_photo_path = Storage::disk('public')->put('avatars', $avatar_photo);
+            if (!is_null($user->avatar_url)) {
+                $old_avatar_photo_path = 'avatars/' . basename($user->avatar_url);
+                Storage::disk('public')->delete($old_avatar_photo_path);
+            }
+            $user->avatar_url = Storage::url($avatar_photo_path);
+        }
+        $user->save(); */
 
         return $user;
     }

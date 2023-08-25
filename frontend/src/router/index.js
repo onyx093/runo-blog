@@ -66,6 +66,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/my-profile/change-password',
+      name: 'profile.change.password',
+      component: () => import('../views/profile/ChangePasswordView.vue'),
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

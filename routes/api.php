@@ -36,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () use ($guestRoutes) {
     Route::apiResource('/tags', TagController::class)->except($guestRoutes);
     Route::apiResource('/users', UserController::class)->except($guestRoutes);
 
+    Route::put('/users/{user}/change-password', [UserController::class, 'changePassword'])->name('user.changePassword');
+
     Route::post('/users/{user}/follow', [UserController::class, 'follow'])->name('user.follow');
     Route::post('/users/{user}/unfollow', [UserController::class, 'unfollow'])->name('user.unfollow');
     Route::get('/users/my-followers', [UserController::class, 'followers'])->name('user.followers');

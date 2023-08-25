@@ -57,7 +57,7 @@ const addNewArticle = async () => {
   if (selectedTags.value.length > 0) {
     form.value.tags = selectedTags.value.map((tag) => tag.name);
   }
-  /* try {
+  try {
     const response = await Article.store(form.value);
     toast.success('New article created!');
     setTimeout(() => {
@@ -65,7 +65,7 @@ const addNewArticle = async () => {
     }, 2000);
   } catch (error) {
     handleError(error);
-  } */
+  }
 };
 
 const uploadImage = (event) => {
@@ -125,7 +125,7 @@ const formattedDate = computed(() => new Date().toLocaleDateString());
                     :readonly="true"
                   />
                   <div class="input__group">
-                    <label class="input__label">Tags</label>
+                    <label class="input__label">Content</label>
                     <QuillEditor
                       v-model:content="form.content"
                       theme="snow"

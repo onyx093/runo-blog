@@ -75,6 +75,9 @@ const showFollowers = () => {
         <RouterLink class="profileLink" :to="{ name: 'profile.edit' }"
           >Edit profile</RouterLink
         >
+        <RouterLink class="profileLink" :to="{ name: 'profile.change.password' }"
+          >Change password</RouterLink
+        >
         <RouterLink class="profileLink" :to="{ name: 'profile.edit' }"
           >Manage subscription</RouterLink
         >
