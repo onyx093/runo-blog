@@ -44,4 +44,7 @@ export default {
   async github() {
     return await Http.get(`/login/github`);
   },
+  async githubAuth() {
+    return await Http.get(`/authenticate/github`);
+  },
 };

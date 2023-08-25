@@ -74,6 +74,7 @@
   padding: 20px;
   border-top: 1px solid #d4a373;
   border-bottom: 1px solid #d4a373;
+  box-sizing: border-box;
 }
 
 .section__info-item {
@@ -92,10 +93,12 @@
 .section__followers-item {
   display: flex;
   align-items: center;
-  column-gap: 50px;
+  flex-wrap: wrap;
+  max-width: 800px;
+  width: 100%;
+  gap: 20%;
   margin: 20px;
   text-decoration: none;
-  padding: 10px;
   transition: 0.7s;
   border-radius: 5px;
 
@@ -107,15 +110,19 @@
 .section__followers-item--img {
   border-radius: 50%;
   max-width: 100px;
+  width: 100%;
   max-height: auto;
+  margin: 20px;
 }
 
 .section__followers-item--name {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: black;
   transition: 0.8s;
   font-family: $loraFont;
+  text-decoration: none;
+  margin: 20px;
 
   &:hover {
     color: $primaryColor;
@@ -123,9 +130,15 @@
 }
 
 .section__button-wrapper {
-  width: max-content;
+  max-width: max-content;
 }
 
 .section__button-follow {
   margin-top: 30px;
+}
+
+.section__followers-item-btn {
+  max-width: 100px;
+  width: 100%;
+  margin: 20px;
 }

@@ -5,9 +5,14 @@ import RelatedArticleCard from '@/components/article/RelatedArticleCard.vue';
 import Article from '@/requests/Article.js';
 import User from '@/requests/User.js';
 import { useUserStore } from '@/stores/user';
+import { useErrorStore } from '@/stores/error';
 import handleError from '@/utils/handleError.js';
+import ButtonComponent from '@/components/general/ButtonComponent.vue';
+import { toast } from 'vue3-toastify';
+import axios from 'axios';
 
 const userStore = useUserStore();
+const errorStore = useErrorStore();
 
 const user = computed(() => userStore.user);
 
@@ -19,6 +24,14 @@ const visibleFollows = ref(false);
 
 const followers = ref([]);
 const follows = ref([]);
+
+const differenceFollows = computed(() => {
+  return followers.value.filter(
+    (e) => !follows.value.find((a) => e.id == a.id)
+  );
+});
+
+const isLoading = ref(false);
 
 const nFollowers = computed(() => {
   return followers.value.length;
@@ -66,6 +79,18 @@ const showFollowers = () => {
   visibleArticles.value = false;
   visibleFollows.value = false;
   visibleFollowers.value = !visibleFollowers.value;
+};
+
+const handleClick = async (id) => {
+  isLoading.value = true;
+  try {
+    const response = await User.follow(id);
+    toast(response.data.message);
+  } catch (error) {
+    handleError(error, errorStore);
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 <template>
@@ -155,28 +180,35 @@ const showFollowers = () => {
         <div v-if="visibleFollowers" class="section__inner-followers">
           <h2 class="section__heading">Followers</h2>
           <ul class="section__followers-container">
-            <router-link
+            <div
               :to="{ name: 'users.show', params: { id: follower.id } }"
               class="section__followers-item"
               v-for="follower in followers"
               :key="follower.id"
             >
               <img
-                v-if="follower.avatar_url"
                 class="section__followers-item--img"
-                :src="follower.avatar_url"
+                :src="
+                  follower.avatar_url
+                    ? 'followe.avatar_url'
+                    : 'https://picsum.photos/100/100'
+                "
                 alt=""
               />
-              <img
-                v-else
-                class="section__followers-item--img"
-                src="https://picsum.photos/100/100"
-                alt=""
-              />
-              <span class="section__followers-item--name">{{
-                follower.name
-              }}</span>
-            </router-link>
+              <router-link
+                class="section__followers-item--name"
+                :to="{ name: 'users.show', params: { id: follower.id } }"
+              >
+                <span>{{ follower.name }}</span>
+              </router-link>
+              <ButtonComponent
+                v-if="differenceFollows.includes(follower)"
+                class="section__followers-item-btn"
+                :loading="isLoading"
+                @btn-click="handleClick(follower.id)"
+                >{{ 'Follow' }}</ButtonComponent
+              >
+            </div>
           </ul>
         </div>
         <div v-if="visibleFollows" class="section__inner-followers">
@@ -189,15 +221,12 @@ const showFollowers = () => {
               :key="follow.id"
             >
               <img
-                v-if="follow.avatar_url"
                 class="section__followers-item--img"
-                :src="follow.avatar_url"
-                alt=""
-              />
-              <img
-                v-else
-                class="section__followers-item--img"
-                src="https://picsum.photos/100/100"
+                :src="
+                  follow.avatar_url
+                    ? 'follow.avatar_url'
+                    : 'https://picsum.photos/100/100'
+                "
                 alt=""
               />
               <span class="section__followers-item--name">{{
