@@ -15,6 +15,10 @@ def createTestingEnvironment() {
                 ['name': 'DB_PASSWORD', 'value': 'password'],
                 ['name': 'LOG_CHANNEL', 'value': 'single'],
                 ['name': 'LOG_LEVEL',   'value': 'debug'],
+                ['name': 'QUEUE_CONNECTION',   'value': 'redis'],
+                ['name': 'REDIS_HOST',   'value': 'localhost'],
+                ['name': 'REDIS_PASSWORD',   'value': 'null'],
+                ['name': 'REDIS_PORT',   'value': '6379'],
             ],
         ],[
            'name': 'pgsql',
@@ -24,7 +28,16 @@ def createTestingEnvironment() {
                 ['name': 'POSTGRES_DB',       'value': 'testing'],
                 ['name': 'POSTGRES_USER',     'value': 'sail'],
                 ['name': 'POSTGRES_PASSWORD', 'value': 'password'],
-          ]
+            ]
+        ],[
+           'name': 'redis',
+           'image': 'redis:alpine',
+           'env': [
+                ['name': 'QUEUE_CONNECTION',   'value': 'redis'],
+                ['name': 'REDIS_HOST',   'value': 'redis'],
+                ['name': 'REDIS_PASSWORD',   'value': 'null'],
+                ['name': 'REDIS_PORT',   'value': '6379'],
+            ]
         ]
    ])
 }
