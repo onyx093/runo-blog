@@ -1,0 +1,75 @@
+.modalWrapper {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  width: 100%;
+  max-width: 350px;
+  background-color: $white;
+  border-radius: 21px;
+  padding: 20px;
+  position: relative;
+}
+
+.modal__close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: none;
+  border: none;
+  transition: 0.5s;
+  &:hover {
+    transform: rotate(180deg);
+    cursor: pointer;
+  }
+}
+
+.modal__button--wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__button--password {
+  display: block;
+  text-align: end;
+  font-size: 1rem;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: 0.8s;
+
+  &:hover {
+    color: $primaryColor;
+  }
+}
+
+.modal__oauth {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal__oauth-txt {
+  display: block;
+  margin: 10px auto;
+  color: #818181;
+  font-size: 1rem;
+}
+
+.modal__oauth-providers {
+  display: flex;
+  justify-content: center;
+}
+
+.modal__oauth-github {
+  width: 30px;
+  height: auto;
+  cursor: pointer;
+}

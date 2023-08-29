@@ -1,7 +1,14 @@
 <?php
 
-use App\Models\Article;
-use Illuminate\Http\Request;
+use App\Http\Controllers\{
+    ArticleController,
+    ArticleCommentController,
+    CommentController,
+    TagController,
+    UserController
+};
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,41 +22,52 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Login, register and logout
+Route::post('/authenticate', [UserController::class, 'login'])->name('login');
+Route::post('/register', [UserController::class, 'register'])->name('register');
+Route::get('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+
+$guestRoutes = ['index', 'show'];
+
+// Authenticated routes
+Route::middleware('auth:sanctum')->group(function () use ($guestRoutes) {
+    Route::apiResource('/articles', ArticleController::class)->except($guestRoutes);
+    Route::apiResource('/comments', CommentController::class)->except($guestRoutes);
+    Route::apiResource('/tags', TagController::class)->except($guestRoutes);
+    Route::apiResource('/users', UserController::class)->except($guestRoutes);
+
+    Route::put('/users/{user}/change-password', [UserController::class, 'changePassword'])->name('user.changePassword');
+
+    Route::post('/users/{user}/follow', [UserController::class, 'follow'])->name('user.follow');
+    Route::post('/users/{user}/unfollow', [UserController::class, 'unfollow'])->name('user.unfollow');
+    Route::get('/users/my-followers', [UserController::class, 'followers'])->name('user.followers');
+    Route::get('/users/my-follows', [UserController::class, 'follows'])->name('user.follows');
+
+    Route::post('/articles/{article}/comments', [ArticleCommentController::class, 'store'])->name('articles.comments.store');
+
+    Route::get('/my', [UserController::class, 'my']);
+    Route::post('/my/upload-avatar', [UserController::class, 'uploadAvatar'])->name('users.upload-avatar');
+
+    Route::get('/notifications', [UserController::class, 'getNotifications']);
+    Route::post('/notifications', [UserController::class, 'markNotifications']);
 });
 
-Route::get('/hello-world', function (Request $request) {
-    return ['hello' => 'world'];
+// Guest routes
+Route::apiResource('/articles', ArticleController::class)->only($guestRoutes);
+Route::apiResource('/comments', CommentController::class)->only($guestRoutes);
+Route::apiResource('/tags', TagController::class)->only($guestRoutes);
+Route::apiResource('/users', UserController::class)->only($guestRoutes);
+
+Route::get('/articles/{article}/comments', [ArticleCommentController::class, 'show'])->name('articles.comments.show');
+
+Route::group(['middleware' => ['web']], function () {
+    Route::get('/login/{provider}', [UserController::class, 'redirectToProvider']);
+    Route::get('/login/{provider}/callback', [UserController::class, 'handleProviderCallback']);
 });
 
-Route::get('/add/{input}/{another}', function (Request $request, string $asdf, string $second) {
-    return $request->foo . $asdf;
-    return (int) $asdf +  (int) $second;
-});
+Route::post('/forgot-password', [UserController::class, 'forgotPassword'])->middleware('guest')->name('password.email');
 
-Route::get('/articles', function () {
-    return Article::all();
-});
+Route::get('/reset-password/{token}', [UserController::class, 'resetPassword'])->middleware('guest')->name('password.reset');
+Route::post('/reset-password', [UserController::class, 'newPassword'])->middleware('guest')->name('password.update');
 
-Route::post('/articles', function (Request $request) {
-    //dd($request->toArray());
-
-    $article = new Article($request->all());
-    $article->save();
-
-    return response('well done you posted it');
-});
-
-Route::get('/articles/{article}', function (Article $article) {
-    return $article;
-});
-
-Route::patch('/articles/{article}', function (Request $request, Article $article) {
-    $article->update($request->all());
-    $article->save();
-});
-
-Route::delete('/articles/{article}', function (Request $request, Article $article) {
-    $article->delete();
-});
+Route::get('authenticate/github', [UserController::class, 'loginWithGithub']);

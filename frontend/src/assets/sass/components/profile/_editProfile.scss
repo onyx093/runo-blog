@@ -1,0 +1,11 @@
+.editProfileForm {
+  background-color: $logoColor;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editProfileForm__inner {
+  width: 450px;
+  height: auto;
+}

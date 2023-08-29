@@ -1,0 +1,119 @@
+.header__dropdown--notifications {
+  position: absolute;
+  top: -5px;
+  right: 0;
+  max-width: 1.2rem;
+  max-height: 1.2rem;
+  width: 100%;
+  line-height: 1.85;
+  text-align: center;
+  border-radius: 50%;
+  background: red;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.header__nav-item-link--bell {
+  height: 1.2rem;
+  fill: white;
+  margin: 0 10px;
+}
+
+.header__nav-item-link--notifications {
+  position: relative;
+  cursor: pointer;
+}
+
+.header__dropdown-content {
+  position: absolute;
+  overflow: auto;
+  max-height: 200px;
+  width: 250px;
+  top: 30px;
+  right: -2px;
+  background-color: white;
+  border-radius: 5px;
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #d4a373;
+  }
+}
+
+.header__dropdown-header {
+  position: relative;
+  background: white;
+  padding: 10px 15px;
+  text-align: center;
+  color: gray;
+  font-weight: bold;
+  font-family: $loraFont;
+  font-size: 1rem;
+  border-radius: 10px 10px 0 0;
+}
+
+.header__dropdown--triangle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: -10px;
+  right: 10px;
+  background: #d4a373;
+  border-radius: 8px 0px 0px 0px;
+  transform: rotate(225deg);
+  z-index: 2;
+}
+
+.header__dropdown-body {
+  border-radius: 5px;
+  background-color: rgba($color: #d4a373, $alpha: 0.2);
+}
+
+.header__dropdown-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2px auto;
+  padding: 10px 0;
+  color: black;
+  width: 100%;
+  font-family: $loraFont;
+  font-size: 0.8rem;
+  text-align: center;
+
+  &:hover {
+    color: $primaryColor;
+  }
+}
+
+.header_dropdown-item-divider {
+  display: block;
+  max-width: 200px;
+  width: 100%;
+  margin: 0px auto;
+  border-bottom: 1px solid $primaryColor;
+}
+
+.header__dropdown-item--img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.header__dropdown-item--txt {
+  font-family: $loraFont;
+  text-decoration: none;
+  font-size: 0.8rem;
+  color: black;
+  transition: 0.8s;
+
+  &:hover {
+    color: $primaryColor;
+  }
+}

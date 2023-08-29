@@ -1,0 +1,51 @@
+.header {
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  z-index: 3;
+}
+
+.header__inner {
+  display: flex;
+  justify-content: space-between;
+  @include container;
+  align-items: center;
+  padding: 0 1rem 0 2rem;
+}
+
+.header__title {
+  color: $logoColor;
+  font-family: 'League Spartan', serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  line-height: 22px;
+}
+
+.header__navList {
+  display: flex;
+}
+
+.header__nav-item {
+  position: relative;
+  list-style: none;
+}
+
+.header__navItemLink {
+  padding: 10px 20px;
+  color: #e5e5e5;
+  text-decoration: none;
+  font-family: $robotoFont;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 14px;
+
+  &:hover {
+    border-bottom: 1px solid $primaryColor;
+  }
+
+  @include for-phone-only {
+    padding: 10px;
+  }
+}

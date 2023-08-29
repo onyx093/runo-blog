@@ -1,0 +1,57 @@
+.mainFooter {
+}
+
+.mainFooter__upper {
+  background-color: #212529;
+}
+
+.mainFooter__upperInner {
+  @include container;
+  padding: 50px 15px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  @include for-tablet-down {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include for-phone-only {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.mainFooter__upperTitle {
+  font-family: $loraFont;
+  font-size: 1.3rem;
+  line-height: 1.389;
+  font-weight: 700;
+  color: $white;
+  margin: 16px 0;
+}
+
+.mainFooter__upperContent {
+  color: #e5e5e5;
+  font-family: $loraFont;
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 18px 0;
+}
+
+.mainFooter__bottom {
+  background-color: #343a40;
+  padding: 20px 10px;
+}
+
+.mainFooter__bottomInner {
+  @include container;
+  display: flex;
+  justify-content: space-between;
+}
+
+.mainFooter__bottomText {
+  margin: 0;
+  font-family: $loraFont;
+  font-size: 1rem;
+  color: #e5e5e5;
+}
